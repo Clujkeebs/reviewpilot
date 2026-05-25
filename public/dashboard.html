@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReviewPilot — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Header ────────────────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-left">
+      <a href="/" class="logo" style="text-decoration:none">
+        <span class="logo-mark">📍</span>
+        <span class="logo-name">ReviewPilot</span>
+      </a>
+      <div class="live-pill">
+        <span class="live-dot"></span>
+        LIVE
+      </div>
+      <a href="/optimize" class="gbp-nav-link">
+        📍 GBP Optimizer
+      </a>
+    </div>
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-val" id="stat-sms">0</span>
+        <span class="stat-lbl">SMS Sent</span>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat">
+        <span class="stat-val" id="stat-reviews">0</span>
+        <span class="stat-lbl">Reviews</span>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat">
+        <span class="stat-val" id="stat-rating">–</span>
+        <span class="stat-lbl">Avg Rating</span>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat">
+        <span class="stat-val" id="stat-replies">0</span>
+        <span class="stat-lbl">AI Replies</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main layout ───────────────────────────────────────────────────── -->
+  <main class="layout">
+
+    <!-- Left panel -->
+    <aside class="panel-left">
+
+      <!-- Send Review Request card -->
+      <div class="card">
+        <div class="card-hd">
+          <h2 class="card-title">Send Review Request</h2>
+          <p class="card-sub">Trigger an SMS to your customer via Twilio</p>
+        </div>
+
+        <form id="sms-form" autocomplete="off" novalidate>
+          <div class="field">
+            <label class="lbl" for="customerName">Customer Name</label>
+            <input class="inp" type="text" id="customerName" placeholder="John Smith" required />
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="lbl" for="phone">Phone Number</label>
+              <input class="inp" type="tel" id="phone" placeholder="+15551234567" required />
+            </div>
+            <div class="field">
+              <label class="lbl" for="city">City</label>
+              <input class="inp" type="text" id="city" placeholder="Austin" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="lbl" for="service">Service Provided</label>
+            <input class="inp" type="text" id="service" placeholder="HVAC Repair, Plumbing, Roof Inspection…" required />
+          </div>
+
+          <div class="field">
+            <label class="lbl" for="reviewLink">
+              Google Review Link
+              <span class="lbl-hint">(optional — uses .env default)</span>
+            </label>
+            <input class="inp" type="url" id="reviewLink" placeholder="https://g.page/r/…" />
+          </div>
+
+          <button class="btn btn-primary" type="submit" id="sms-btn">
+            <span class="btn-ico">📱</span>
+            <span class="btn-txt" id="sms-btn-txt">Send Review Request via SMS</span>
+            <span class="spinner hidden" id="sms-spinner"></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Simulate Incoming Review card -->
+      <div class="card">
+        <div class="card-hd">
+          <h2 class="card-title">Simulate Incoming Review</h2>
+          <p class="card-sub">Test the AI auto-responder with a mock Google review</p>
+        </div>
+
+        <div class="field">
+          <label class="lbl" for="reviewText">Review Text</label>
+          <textarea
+            class="inp inp-ta"
+            id="reviewText"
+            rows="4"
+            placeholder="Great service! The technician arrived on time and fixed our AC unit quickly. Very professional and thorough."
+          ></textarea>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="lbl">Star Rating</label>
+            <div class="stars" id="star-selector">
+              <button class="star" data-v="1" type="button">★</button>
+              <button class="star" data-v="2" type="button">★</button>
+              <button class="star" data-v="3" type="button">★</button>
+              <button class="star" data-v="4" type="button">★</button>
+              <button class="star active" data-v="5" type="button">★</button>
+            </div>
+            <input type="hidden" id="ratingVal" value="5" />
+          </div>
+          <div class="field">
+            <label class="lbl" for="reviewerName">Reviewer Name</label>
+            <input class="inp" type="text" id="reviewerName" placeholder="Sarah M." />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="lbl" for="simService">Service</label>
+            <input class="inp" type="text" id="simService" placeholder="HVAC Repair" />
+          </div>
+          <div class="field">
+            <label class="lbl" for="simCity">City</label>
+            <input class="inp" type="text" id="simCity" placeholder="Austin" />
+          </div>
+        </div>
+
+        <button class="btn btn-purple" type="button" id="sim-btn">
+          <span class="btn-ico">🤖</span>
+          <span class="btn-txt" id="sim-btn-txt">Generate AI Reply</span>
+          <span class="spinner hidden" id="sim-spinner"></span>
+        </button>
+      </div>
+
+      <!-- GBP Optimizer promo -->
+      <div class="card card-gbp-promo">
+        <div class="gbp-promo-icon">📍</div>
+        <h3 class="gbp-promo-title">Google Business Profile Optimizer</h3>
+        <p class="gbp-promo-desc">Get an AI-powered audit of your entire GBP — optimized description, categories, photo plan, Q&amp;A, content calendar, and quick wins you can act on today.</p>
+        <a href="/optimize" class="gbp-promo-btn">Run Free GBP Audit →</a>
+      </div>
+
+    </aside>
+
+    <!-- Right panel: Activity Feed -->
+    <section class="panel-right">
+      <div class="feed-hd">
+        <h2 class="feed-title">Review Activity Feed</h2>
+        <div class="feed-controls">
+          <span class="feed-count" id="feed-count">0 items</span>
+          <button class="btn-ghost" id="clear-btn">Clear</button>
+        </div>
+      </div>
+
+      <div class="feed-body" id="feed-body">
+        <div class="empty" id="empty-state">
+          <div class="empty-ico">📬</div>
+          <p class="empty-title">No activity yet</p>
+          <p class="empty-desc">Send a review request or simulate an incoming review to see results here.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast container -->
+  <div id="toasts"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReviewPilot — Start Your Free Trial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="signup.css" />
+</head>
+<body>
+
+  <div class="signup-page">
+
+    <!-- Left: form -->
+    <div class="signup-form-col">
+      <a href="/" class="signup-back">← Back to home</a>
+
+      <div class="signup-form-wrap">
+        <div class="signup-logo">
+          <span>📍</span>
+          <span>ReviewPilot</span>
+        </div>
+
+        <h1 class="signup-h1">Start your free 14-day trial.</h1>
+        <p class="signup-sub">No credit card required. Set up in 10 minutes. Cancel anytime.</p>
+
+        <form id="signup-form" novalidate>
+
+          <div class="sf-row">
+            <div class="sf-field">
+              <label class="sf-lbl" for="s-name">Your Name *</label>
+              <input class="sf-inp" type="text" id="s-name" placeholder="Sarah Thompson" required />
+            </div>
+            <div class="sf-field">
+              <label class="sf-lbl" for="s-email">Email Address *</label>
+              <input class="sf-inp" type="email" id="s-email" placeholder="sarah@austinhvac.com" required />
+            </div>
+          </div>
+
+          <div class="sf-field">
+            <label class="sf-lbl" for="s-biz">Business Name *</label>
+            <input class="sf-inp" type="text" id="s-biz" placeholder="Austin HVAC Pros" required />
+          </div>
+
+          <div class="sf-row">
+            <div class="sf-field">
+              <label class="sf-lbl" for="s-trade">Your Trade</label>
+              <select class="sf-inp" id="s-trade">
+                <option value="">Select your trade…</option>
+                <option value="AC / HVAC">AC / HVAC</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Roofing">Roofing</option>
+                <option value="Landscaping">Landscaping / Lawn Care</option>
+                <option value="Pest Control">Pest Control</option>
+                <option value="House Cleaning">House Cleaning</option>
+                <option value="Auto Repair">Auto Repair</option>
+                <option value="Appliance Repair">Appliance Repair</option>
+                <option value="Painting">Painting</option>
+                <option value="Flooring">Flooring</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="sf-field">
+              <label class="sf-lbl" for="s-phone">Business Phone <span class="sf-opt">(optional)</span></label>
+              <input class="sf-inp" type="tel" id="s-phone" placeholder="+1 (512) 555-0100" />
+            </div>
+          </div>
+
+          <div id="sf-error" class="sf-error hidden"></div>
+
+          <button class="sf-submit" type="submit" id="sf-btn">
+            <span id="sf-btn-txt">Create My Free Account →</span>
+            <span class="sf-spinner hidden" id="sf-spinner"></span>
+          </button>
+
+          <p class="sf-terms">By signing up, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right: social proof panel -->
+    <div class="signup-proof-col">
+      <div class="proof-inner">
+
+        <div class="proof-headline">Join 500+ local businesses already winning on Google Maps.</div>
+
+        <div class="proof-checks">
+          <div class="proof-check">✓ Free 14-day trial, no credit card</div>
+          <div class="proof-check">✓ Unlimited SMS review requests</div>
+          <div class="proof-check">✓ AI-generated replies, ready to post</div>
+          <div class="proof-check">✓ GBP Optimizer — full profile audit &amp; action plan</div>
+          <div class="proof-check">✓ Works for any local trade or service</div>
+          <div class="proof-check">✓ Set up in about 10 minutes</div>
+          <div class="proof-check">✓ Cancel anytime, no questions asked</div>
+        </div>
+
+        <div class="proof-quotes">
+          <div class="proof-quote">
+            <div class="proof-stars">★★★★★</div>
+            <p>"We went from 34 reviews to 127 in six weeks. ReviewPilot is the best thing I've added to my business this year."</p>
+            <div class="proof-attr">— Marcus D., Blue Ridge HVAC · Austin, TX</div>
+          </div>
+          <div class="proof-quote">
+            <div class="proof-stars">★★★★★</div>
+            <p>"Our Google Maps calls went up 34% in the first month. It was purely the reviews and AI replies."</p>
+            <div class="proof-attr">— Tony B., Apex Roofing · Phoenix, AZ</div>
+          </div>
+        </div>
+
+        <div class="proof-stat-row">
+          <div class="proof-stat">
+            <span class="ps-num">40,000+</span>
+            <span class="ps-lbl">Reviews Generated</span>
+          </div>
+          <div class="proof-stat">
+            <span class="ps-num">4.87 ★</span>
+            <span class="ps-lbl">Avg Client Rating</span>
+          </div>
+          <div class="proof-stat">
+            <span class="ps-num">2.3×</span>
+            <span class="ps-lbl">Avg Ranking Lift</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Pre-select plan from URL if passed from pricing section
+    const params = new URLSearchParams(window.location.search);
+    const plan   = params.get('plan');
+    if (plan) {
+      const label = document.querySelector('.signup-sub');
+      if (label && plan === 'pro') {
+        label.textContent = 'Pro plan selected. No credit card required. Set up in 10 minutes.';
+      }
+    }
+
+    const form     = document.getElementById('signup-form');
+    const btn      = document.getElementById('sf-btn');
+    const btnTxt   = document.getElementById('sf-btn-txt');
+    const spinner  = document.getElementById('sf-spinner');
+    const errorBox = document.getElementById('sf-error');
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      errorBox.classList.add('hidden');
+
+      const name  = document.getElementById('s-name').value.trim();
+      const email = document.getElementById('s-email').value.trim();
+      const biz   = document.getElementById('s-biz').value.trim();
+
+      if (!name || !email || !biz) {
+        showError('Please fill in your name, email, and business name.');
+        if (!name)  shake(document.getElementById('s-name'));
+        if (!email) shake(document.getElementById('s-email'));
+        if (!biz)   shake(document.getElementById('s-biz'));
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('Please enter a valid email address.');
+        shake(document.getElementById('s-email'));
+        return;
+      }
+
+      setBusy(true);
+
+      try {
+        const res  = await fetch('/api/signup', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            email,
+            businessName: biz,
+            trade: document.getElementById('s-trade').value,
+            phone: document.getElementById('s-phone').value.trim(),
+            plan:  plan || 'starter',
+          }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.redirect) {
+          window.location.href = data.redirect;
+        } else {
+          showError(data.error || 'Something went wrong. Please try again.');
+        }
+      } catch (err) {
+        showError('Network error. Please check your connection and try again.');
+      } finally {
+        setBusy(false);
+      }
+    });
+
+    function setBusy(busy) {
+      btn.disabled = busy;
+      btnTxt.textContent = busy ? 'Creating your account…' : 'Create My Free Account →';
+      spinner.classList.toggle('hidden', !busy);
+    }
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.classList.remove('hidden');
+      errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function shake(el) {
+      el.classList.add('inp-error');
+      el.animate([
+        { transform: 'translateX(0)' },
+        { transform: 'translateX(-5px)' },
+        { transform: 'translateX(5px)' },
+        { transform: 'translateX(-4px)' },
+        { transform: 'translateX(4px)' },
+        { transform: 'translateX(0)' },
+      ], { duration: 320, easing: 'ease' });
+      el.addEventListener('input', () => el.classList.remove('inp-error'), { once: true });
+    }
+  </script>
+</body>
+</html>

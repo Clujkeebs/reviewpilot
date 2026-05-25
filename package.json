@@ -1,0 +1,19 @@
+{
+  "name": "reviewpilot",
+  "version": "1.0.0",
+  "description": "B2B Local SEO & Review Automation micro-SaaS",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.55.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}

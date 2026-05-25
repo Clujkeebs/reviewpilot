@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReviewPilot — Google Business Profile Optimizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="optimize.css" />
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="o-header">
+    <a href="/dashboard" class="o-back">← Dashboard</a>
+    <div class="o-logo">
+      <span>📍</span>
+      <span>ReviewPilot</span>
+    </div>
+    <span class="o-badge">GBP Optimizer</span>
+  </header>
+
+  <!-- ── Form Hero ── -->
+  <section class="o-hero">
+    <div class="o-hero-inner">
+      <div class="o-hero-copy">
+        <h1 class="o-h1">Google Business Profile Optimizer</h1>
+        <p class="o-sub">Enter your business details below. Claude analyzes your profile and generates a complete, copy-paste-ready action plan to rank higher on Google Maps — description, categories, photos, Q&amp;A, posts, and more.</p>
+      </div>
+
+      <div class="o-form-card" id="form-card">
+        <div class="o-form-grid">
+
+          <div class="o-field">
+            <label class="o-lbl" for="f-name">Business Name <span class="req">*</span></label>
+            <input class="o-inp" type="text" id="f-name" placeholder="Austin HVAC Pros" />
+          </div>
+
+          <div class="o-field">
+            <label class="o-lbl" for="f-category">Trade / Category <span class="req">*</span></label>
+            <select class="o-inp" id="f-category">
+              <option value="">Select your trade…</option>
+              <option value="HVAC Contractor">AC / HVAC</option>
+              <option value="Plumber">Plumbing</option>
+              <option value="Electrician">Electrical</option>
+              <option value="Roofing Contractor">Roofing</option>
+              <option value="Landscaper">Landscaping / Lawn Care</option>
+              <option value="Pest Control Service">Pest Control</option>
+              <option value="House Cleaning Service">House Cleaning</option>
+              <option value="Auto Repair Shop">Auto Repair</option>
+              <option value="Appliance Repair Service">Appliance Repair</option>
+              <option value="Painter">Painting</option>
+              <option value="Flooring Contractor">Flooring</option>
+              <option value="Window Installation Service">Windows &amp; Doors</option>
+              <option value="Handyman">Handyman</option>
+              <option value="Pool Service">Pool Service &amp; Repair</option>
+              <option value="Tree Service">Tree Service</option>
+              <option value="Pressure Washing Service">Pressure Washing</option>
+              <option value="Garage Door Service">Garage Door Service</option>
+              <option value="Locksmith">Locksmith</option>
+              <option value="Water Damage Restoration Service">Water Damage Restoration</option>
+              <option value="Moving Company">Moving Company</option>
+            </select>
+          </div>
+
+          <div class="o-field">
+            <label class="o-lbl" for="f-city">City <span class="req">*</span></label>
+            <input class="o-inp" type="text" id="f-city" placeholder="Austin, TX" />
+          </div>
+
+          <div class="o-field o-field-full">
+            <label class="o-lbl" for="f-services">Services You Offer <span class="req">*</span></label>
+            <textarea class="o-inp o-ta" id="f-services" rows="3"
+              placeholder="AC repair, furnace installation, emergency HVAC, duct cleaning, tune-ups, new system install…"></textarea>
+          </div>
+
+          <div class="o-field">
+            <label class="o-lbl" for="f-desc">
+              Current GBP Description
+              <span class="o-opt">(paste yours or leave blank)</span>
+            </label>
+            <textarea class="o-inp o-ta" id="f-desc" rows="3"
+              placeholder="If you already have a description on Google, paste it here so we can score it and improve it."></textarea>
+          </div>
+
+          <div class="o-field">
+            <label class="o-lbl" for="f-website">
+              Website URL
+              <span class="o-opt">(optional)</span>
+            </label>
+            <input class="o-inp" type="url" id="f-website" placeholder="https://austinhvacpros.com" />
+          </div>
+
+        </div><!-- /grid -->
+
+        <div id="f-error" class="o-error hidden"></div>
+
+        <button class="o-analyze-btn" id="analyze-btn">
+          <span id="analyze-btn-txt">Analyze My Google Profile →</span>
+          <span class="o-spinner hidden" id="analyze-spinner"></span>
+        </button>
+
+        <p class="o-form-note">Analysis takes 10–20 seconds. Powered by Claude AI.</p>
+      </div><!-- /form-card -->
+    </div>
+  </section>
+
+  <!-- ── Loading state ── -->
+  <div class="o-loading hidden" id="o-loading">
+    <div class="o-loading-inner">
+      <div class="o-loading-ring">
+        <svg viewBox="0 0 60 60">
+          <circle cx="30" cy="30" r="26" />
+        </svg>
+        <span>📍</span>
+      </div>
+      <p class="o-loading-title">Analyzing <span id="loading-biz">your profile</span>…</p>
+      <div class="o-loading-steps" id="loading-steps">
+        <div class="lstep active" data-step="0">Scanning business category &amp; location</div>
+        <div class="lstep" data-step="1">Generating optimized description</div>
+        <div class="lstep" data-step="2">Building Q&amp;A and content calendar</div>
+        <div class="lstep" data-step="3">Calculating your GBP ranking score</div>
+        <div class="lstep" data-step="4">Compiling quick wins &amp; action plan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Results ── -->
+  <section class="o-results hidden" id="o-results">
+    <div class="o-results-inner">
+
+      <!-- Row 1: Score + Description -->
+      <div class="res-row res-row-top">
+        <div id="card-score" class="opt-card score-card"></div>
+        <div id="card-description" class="opt-card"></div>
+      </div>
+
+      <!-- Row 2: Categories + Quick Wins -->
+      <div class="res-row res-row-half">
+        <div id="card-categories" class="opt-card"></div>
+        <div id="card-quickwins" class="opt-card"></div>
+      </div>
+
+      <!-- Full: Photo Checklist -->
+      <div id="card-photos" class="opt-card"></div>
+
+      <!-- Full: Q&A Templates -->
+      <div id="card-qa" class="opt-card"></div>
+
+      <!-- Full: Content Calendar -->
+      <div id="card-calendar" class="opt-card"></div>
+
+      <!-- Row: Keywords + Completeness -->
+      <div class="res-row res-row-half">
+        <div id="card-keywords" class="opt-card"></div>
+        <div id="card-checklist" class="opt-card"></div>
+      </div>
+
+      <!-- Actions row -->
+      <div class="res-actions">
+        <button class="o-reanalyze-btn" id="reanalyze-btn">← Edit &amp; Re-analyze</button>
+        <button class="o-download-btn" id="download-btn">⬇ Download Full Report</button>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="optimize.js"></script>
+</body>
+</html>
