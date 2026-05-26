@@ -565,8 +565,21 @@ app.get('/api/leads', (_req, res) => {
 
 // POST /api/optimize
 app.post('/api/optimize', async (req, res) => {
-  const { businessName, category, city, services, currentDescription, website } = req.body;
+  const { businessName, category, city, services, currentDescription, website, email } = req.body;
   if (!businessName || !category || !city || !services) return res.status(400).json({ error: 'businessName, category, city, and services are required.' });
+
+  // Track lead if email provided (from free ranking calculator)
+  if (email && email.includes('@')) {
+    try {
+      const leadsPath = path.join(__dirname, 'data', 'audit-leads.json');
+      let leads = [];
+      try { leads = JSON.parse(fs.readFileSync(leadsPath, 'utf8')); } catch {}
+      leads.push({ email, businessName, category, city, services, website, ts: new Date().toISOString() });
+      fs.writeFileSync(leadsPath, JSON.stringify(leads, null, 2));
+      console.log(`[Lead] Captured: ${email} — ${businessName} in ${city}`);
+    } catch (e) { console.error('[Lead] save failed:', e.message); }
+  }
+
   try {
     const analysis = await generateGBPOptimization({ businessName, category, city, services, currentDescription, website });
     console.log(`[GBP Optimize] ${businessName} in ${city} — score ${analysis.score?.overall}`);
@@ -587,7 +600,7 @@ app.get('/signup',              (_req, res) => res.sendFile(path.join(__dirname,
 app.get('/pricing',             (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/ranking-calculator',  (_req, res) => res.sendFile(path.join(__dirname, 'public', 'ranking-calculator.html')));
 app.get('/dashboard',           requireAuth, requireSubscription, (_req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
-app.get('/optimize',            (_req, res) => res.sendFile(path.join(__dirname, 'public', 'optimize.html')));
+app.get('/optimize',            requireAuth, requireSubscription, (_req, res) => res.sendFile(path.join(__dirname, 'public', 'optimize.html')));
 app.get('/account',             requireAuth, (_req, res) => res.sendFile(path.join(__dirname, 'public', 'account.html')));
 app.get('/reset-password',      (_req, res) => res.sendFile(path.join(__dirname, 'public', 'reset-password.html')));
 app.get('/health',              (_req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));

@@ -156,12 +156,18 @@ function renderResults(analysis, bizName, city, trade) {
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
-  // Make locked overlays clickable → go to signup
+  // Make locked overlays + CTA button pass email to signup if captured
+  const capturedEmail = document.getElementById('rc-email').value.trim();
+  const signupUrl = capturedEmail ? '/signup?email=' + encodeURIComponent(capturedEmail) : '/signup';
+
   document.querySelectorAll('.locked-overlay-inner').forEach(overlay => {
     overlay.addEventListener('click', () => {
-      window.location.href = '/signup';
+      window.location.href = signupUrl;
     });
   });
+
+  const ctaBtn = document.getElementById('cta-signup-btn');
+  if (ctaBtn) ctaBtn.href = signupUrl;
 }
 
 /* ── Form handling ─────────────────────────────────────────────────────── */
@@ -195,6 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const services     = document.getElementById('rc-services').value.trim();
     const currentDescription = document.getElementById('rc-desc').value.trim();
     const website      = document.getElementById('rc-website').value.trim();
+    const email        = document.getElementById('rc-email').value.trim();
 
     // Validation
     if (!businessName) { showError('Please enter your business name.'); return; }
@@ -208,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/optimize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ businessName, category, city, services, currentDescription, website }),
+        body: JSON.stringify({ businessName, category, city, services, currentDescription, website, email }),
       });
 
       const data = await res.json();

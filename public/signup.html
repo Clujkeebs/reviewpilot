@@ -154,7 +154,7 @@
   </div>
 
   <script>
-    // Pre-select plan from URL if passed from pricing section
+    // Pre-fill from URL params (plan from pricing, email from ranking calculator)
     const params = new URLSearchParams(window.location.search);
     const plan   = params.get('plan');
     if (plan) {
@@ -162,6 +162,11 @@
       if (label && plan === 'pro') {
         label.textContent = 'Pro plan selected. No credit card required. Set up in 10 minutes.';
       }
+    }
+    const prefillEmail = params.get('email');
+    if (prefillEmail) {
+      const emailField = document.getElementById('s-email');
+      if (emailField) emailField.value = prefillEmail;
     }
 
     const form     = document.getElementById('signup-form');
