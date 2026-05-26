@@ -39,6 +39,10 @@
   border-radius: var(--r);
   padding: 24px;
   box-shadow: var(--shadow);
+  transition: box-shadow .2s ease;
+}
+.acct-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,.08);
 }
 .acct-card-title {
   font-size: 16px;
@@ -105,8 +109,9 @@
   transition: var(--ease);
   text-decoration: none;
 }
-.acct-btn-primary { background: var(--navy); color: #fff; }
-.acct-btn-primary:hover:not(:disabled) { background: var(--navy-lt); }
+.acct-btn-primary { background: var(--navy); color: #fff; box-shadow: 0 2px 8px rgba(13,33,55,.2); }
+.acct-btn-primary:hover:not(:disabled) { background: var(--navy-lt); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13,33,55,.3); }
+.acct-btn-primary:active:not(:disabled) { transform: translateY(0); box-shadow: none; }
 .acct-btn-primary:disabled { opacity: .55; cursor: not-allowed; }
 
 .acct-btn-ghost {
@@ -127,8 +132,10 @@
 .acct-btn-danger {
   background: var(--red);
   color: #fff;
+  box-shadow: 0 2px 8px rgba(220,38,38,.2);
 }
-.acct-btn-danger:hover { background: #b91c1c; }
+.acct-btn-danger:hover { background: #b91c1c; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(220,38,38,.3); }
+.acct-btn-danger:active { transform: translateY(0); box-shadow: none; }
 
 .acct-msg {
   font-size: 13px;

@@ -255,6 +255,40 @@
       ], { duration: 320, easing: 'ease' });
       el.addEventListener('input', () => el.classList.remove('inp-error'), { once: true });
     }
+
+    // ── Password strength indicator ──────────────────────────────────────
+    const pwInput = document.getElementById('s-password');
+    const pwBar   = document.getElementById('pw-bar');
+    const pwHint  = document.getElementById('pw-hint');
+
+    function checkStrength(pw) {
+      if (!pw) return { level: '', hint: '' };
+      let score = 0;
+      if (pw.length >= 8) score++;
+      if (pw.length >= 12) score++;
+      if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+      if (/\d/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      if (score <= 2) return { level: 'weak', hint: 'Weak — add uppercase, numbers, or symbols' };
+      if (score <= 3) return { level: 'medium', hint: 'Decent — try making it longer or adding symbols' };
+      return { level: 'strong', hint: 'Strong password' };
+    }
+
+    pwInput.addEventListener('input', () => {
+      const { level, hint } = checkStrength(pwInput.value);
+      pwBar.className = 'pw-strength-bar' + (level ? ' ' + level : '');
+      pwHint.textContent = hint;
+      pwHint.style.color = level === 'strong' ? '#059669' : level === 'medium' ? '#d97706' : '#dc2626';
+    });
+
+    // ── Show / hide password toggle ──────────────────────────────────────
+    const pwToggle = document.getElementById('pw-toggle');
+    pwToggle.addEventListener('click', () => {
+      const isHidden = pwInput.type === 'password';
+      pwInput.type = isHidden ? 'text' : 'password';
+      pwToggle.textContent = isHidden ? '🙈' : '👁';
+      pwToggle.title = isHidden ? 'Hide password' : 'Show password';
+    });
   </script>
 </body>
 </html>

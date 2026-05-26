@@ -41,7 +41,10 @@
 
           <div class="sf-field">
             <label class="sf-lbl" for="l-password">Password</label>
-            <input class="sf-inp" type="password" id="l-password" placeholder="Your password" required />
+            <div style="position:relative">
+              <input class="sf-inp" type="password" id="l-password" placeholder="Your password" required style="padding-right:42px" />
+              <button type="button" id="lpw-toggle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#9ca3af;padding:4px;line-height:1" title="Show password">👁</button>
+            </div>
           </div>
 
           <div id="lf-error" class="sf-error hidden"></div>
@@ -189,6 +192,16 @@
         fpMsg.style.color = '#dc2626';
         fpMsg.textContent = 'Network error. Please try again.';
       } finally { fpBtn.disabled = false; }
+    });
+
+    // ── Show / hide password toggle ──────────────────────────────────────
+    const lpwToggle = document.getElementById('lpw-toggle');
+    const lpwInput  = document.getElementById('l-password');
+    lpwToggle.addEventListener('click', () => {
+      const isHidden = lpwInput.type === 'password';
+      lpwInput.type = isHidden ? 'text' : 'password';
+      lpwToggle.textContent = isHidden ? '🙈' : '👁';
+      lpwToggle.title = isHidden ? 'Hide password' : 'Show password';
     });
   </script>
 </body>

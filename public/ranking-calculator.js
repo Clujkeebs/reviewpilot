@@ -155,6 +155,13 @@ function renderResults(analysis, bizName, city, trade) {
     });
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
+
+  // Make locked overlays clickable → go to signup
+  document.querySelectorAll('.locked-overlay-inner').forEach(overlay => {
+    overlay.addEventListener('click', () => {
+      window.location.href = '/signup';
+    });
+  });
 }
 
 /* ── Form handling ─────────────────────────────────────────────────────── */
