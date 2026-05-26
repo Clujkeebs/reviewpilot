@@ -53,7 +53,9 @@ body {
 
 .logo { display: flex; align-items: center; gap: 7px; }
 .logo-mark { font-size: 18px; }
+.logo-text { display: flex; flex-direction: column; line-height: 1; }
 .logo-name  { font-size: 16px; font-weight: 700; color: var(--primary); letter-spacing: -.3px; }
+.logo-by    { font-size: 9px; font-weight: 500; color: var(--amber); letter-spacing: .04em; text-transform: uppercase; margin-top: 1px; }
 
 .live-pill {
   display: flex;

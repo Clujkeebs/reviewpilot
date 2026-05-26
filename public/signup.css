@@ -69,6 +69,9 @@ body {
   margin-bottom: 28px;
 }
 .signup-logo span:first-child { font-size: 22px; }
+.signup-logo-text { display: flex; flex-direction: column; line-height: 1; }
+.signup-logo-name { font-size: 20px; font-weight: 800; color: var(--navy); letter-spacing: -.3px; }
+.signup-logo-by   { font-size: 9px; font-weight: 500; color: var(--amber); letter-spacing: .05em; text-transform: uppercase; margin-top: 2px; }
 
 .signup-h1 {
   font-size: 28px;

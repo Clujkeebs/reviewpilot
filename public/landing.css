@@ -76,7 +76,9 @@ img { display: block; max-width: 100%; }
   flex-shrink: 0;
 }
 .nav-logo-mark { font-size: 20px; }
+.nav-logo-text { display: flex; flex-direction: column; line-height: 1; }
 .nav-logo-name { font-size: 17px; font-weight: 800; color: var(--navy); letter-spacing: -.3px; }
+.nav-logo-by   { font-size: 9px; font-weight: 500; color: var(--amber-dk); letter-spacing: .04em; text-transform: uppercase; margin-top: 1px; }
 
 /* Links */
 .nav-links {
