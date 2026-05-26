@@ -538,7 +538,7 @@ app.get('/api/stats', requireAuth, (req, res) => {
 });
 
 // POST /api/webhook/review
-app.post('/api/webhook/review', async (req, res) => {
+app.post('/api/webhook/review', requireAuth, async (req, res) => {
   const { reviewText, reviewerName, service, city, rating } = req.body;
   if (!reviewText || !reviewText.trim()) return res.status(400).json({ error: 'reviewText is required.' });
   const numericRating = Math.min(5, Math.max(1, Number(rating) || 5));
@@ -556,11 +556,28 @@ app.post('/api/webhook/review', async (req, res) => {
 // GET /api/feed
 app.get('/api/feed', requireAuth, (_req, res) => { res.json(activityFeed); });
 
-// GET /api/leads (admin)
-app.get('/api/leads', (_req, res) => {
+// GET /api/leads (admin — requires ADMIN_KEY header)
+app.get('/api/leads', (req, res) => {
+  const adminKey = process.env.ADMIN_KEY;
+  if (!adminKey || req.headers['x-admin-key'] !== adminKey) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
   users = loadUsers();
   const safe = users.map(({ passwordHash, ...u }) => u);
   res.json({ count: safe.length, leads: safe });
+});
+
+// GET /api/audit-leads (admin — requires ADMIN_KEY header)
+app.get('/api/audit-leads', (req, res) => {
+  const adminKey = process.env.ADMIN_KEY;
+  if (!adminKey || req.headers['x-admin-key'] !== adminKey) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  try {
+    const leadsPath = path.join(__dirname, 'data', 'audit-leads.json');
+    const leads = JSON.parse(fs.readFileSync(leadsPath, 'utf8'));
+    res.json({ count: leads.length, leads });
+  } catch { res.json({ count: 0, leads: [] }); }
 });
 
 // POST /api/optimize

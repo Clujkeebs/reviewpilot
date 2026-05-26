@@ -796,4 +796,7 @@ a.logo-by:hover { color: #fbbf24; }
   .panel-right { max-height: 560px; }
   .stats-row { display: none; }
   .trial-banner-inner { flex-wrap: wrap; }
+  .header { height: auto; min-height: var(--header-h); flex-wrap: wrap; padding: 10px 16px; gap: 8px; }
+  .header-user { margin-left: 0 !important; width: 100%; justify-content: flex-end; }
+  .gbp-nav-link { font-size: 11px; padding: 5px 10px; }
 }
