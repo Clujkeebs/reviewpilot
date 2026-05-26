@@ -146,7 +146,6 @@ clearBtn.addEventListener('click', () => {
   knownIds.clear();
   copyMap.clear();
   checkEmpty();
-  updateStats([]);
   toast('info', 'Feed cleared.');
 });
 
@@ -154,8 +153,8 @@ clearBtn.addEventListener('click', () => {
 async function syncFeed() {
   try {
     const res  = await fetch(`${API}/api/feed`);
+    if (!res.ok) return;
     const feed = await res.json();
-    updateStats(feed);
     // Insert any items the server has that we don't (e.g. from other sessions)
     feed.forEach(item => {
       if (!knownIds.has(item.id)) insertItem(item, false);
@@ -328,14 +327,13 @@ function toast(type, msg) {
   }, 3600);
 }
 
-// ── Welcome toast on redirect from signup ─────────────────────────────────────
+// ── Welcome on redirect from signup ──────────────────────────────────────────
+// Note: the full onboarding modal is now rendered in dashboard.html and consumes
+// the ?welcome=1 query param. This handler only covers the "returning" case.
 (function handleWelcome() {
   const p = new URLSearchParams(window.location.search);
   const w = p.get('welcome');
-  if (w === '1') {
-    setTimeout(() => toast('ok', '🎉 Welcome to ReviewPilot! Send your first review request to get started.'), 500);
-    window.history.replaceState({}, '', '/dashboard');
-  } else if (w === 'returning') {
+  if (w === 'returning') {
     setTimeout(() => toast('info', '👋 Welcome back! Your dashboard is ready.'), 500);
     window.history.replaceState({}, '', '/dashboard');
   }

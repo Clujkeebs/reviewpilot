@@ -52,8 +52,19 @@
           </button>
 
           <p class="sf-terms" style="margin-top:16px">
-            <a href="#" style="color:#6b7280;font-size:13px">Forgot password?</a>
+            <a href="#" id="forgot-link" style="color:#6b7280;font-size:13px">Forgot password?</a>
           </p>
+
+          <!-- Inline forgot-password form -->
+          <div id="forgot-box" class="sf-field" style="display:none;margin-top:14px;padding:14px;border:1px dashed #e5e7eb;border-radius:9px;background:#f9fafb">
+            <label class="sf-lbl" for="fp-email">Reset your password</label>
+            <p style="font-size:12px;color:#6b7280;margin:4px 0 8px">Enter your email and we'll send a reset link.</p>
+            <div style="display:flex;gap:8px">
+              <input class="sf-inp" type="email" id="fp-email" placeholder="you@business.com" style="flex:1" />
+              <button class="sf-submit" type="button" id="fp-btn" style="margin:0;padding:10px 16px;width:auto;font-size:13px;box-shadow:none">Send</button>
+            </div>
+            <p id="fp-msg" style="margin-top:10px;font-size:12.5px;color:#059669"></p>
+          </div>
 
           <p class="sf-terms" style="margin-top:12px;font-size:14px;color:#6b7280">
             Don't have an account? <a href="/signup" style="color:#1d4ed8;font-weight:600">Sign up free</a>
@@ -143,6 +154,42 @@
         { transform: 'translateX(0)' },
       ], { duration: 320, easing: 'ease' });
     }
+
+    // ── Forgot password ───────────────────────────────────────────────────
+    const forgotLink = document.getElementById('forgot-link');
+    const forgotBox  = document.getElementById('forgot-box');
+    const fpEmail    = document.getElementById('fp-email');
+    const fpBtn      = document.getElementById('fp-btn');
+    const fpMsg      = document.getElementById('fp-msg');
+
+    forgotLink.addEventListener('click', e => {
+      e.preventDefault();
+      forgotBox.style.display = forgotBox.style.display === 'none' ? '' : 'none';
+      if (forgotBox.style.display !== 'none') {
+        fpEmail.value = document.getElementById('l-email').value || '';
+        fpEmail.focus();
+      }
+    });
+
+    fpBtn.addEventListener('click', async () => {
+      const email = fpEmail.value.trim();
+      if (!email) { fpMsg.textContent = 'Please enter your email.'; fpMsg.style.color = '#dc2626'; return; }
+      fpBtn.disabled = true;
+      fpMsg.textContent = '';
+      try {
+        const res  = await fetch('/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        fpMsg.style.color = '#059669';
+        fpMsg.textContent = data.message || 'If that email exists, we sent a reset link.';
+      } catch {
+        fpMsg.style.color = '#dc2626';
+        fpMsg.textContent = 'Network error. Please try again.';
+      } finally { fpBtn.disabled = false; }
+    });
   </script>
 </body>
 </html>

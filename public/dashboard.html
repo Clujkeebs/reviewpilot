@@ -12,6 +12,60 @@
 </head>
 <body>
 
+  <!-- ── Trial banner (yellow when 0-3 days, red when expired) ─────────── -->
+  <div id="trial-banner" class="trial-banner hidden">
+    <div class="trial-banner-inner">
+      <span class="trial-banner-icon" id="trial-banner-icon">⏰</span>
+      <span class="trial-banner-text" id="trial-banner-text">Your free trial ends soon.</span>
+      <a href="/account" class="trial-banner-btn" id="trial-banner-btn">Upgrade Now →</a>
+      <button class="trial-banner-x" id="trial-banner-x" title="Dismiss">×</button>
+    </div>
+  </div>
+
+  <!-- ── Trial expired overlay ─────────────────────────────────────────── -->
+  <div id="trial-expired" class="trial-expired hidden">
+    <div class="trial-expired-box">
+      <div class="trial-expired-icon">🔒</div>
+      <h2 class="trial-expired-title">Your trial has ended.</h2>
+      <p class="trial-expired-sub">Upgrade to continue using ReviewPilot — keep your customer list, SMS automation, AI replies, and GBP Optimizer.</p>
+      <a href="/pricing" class="trial-expired-btn">Upgrade to continue →</a>
+    </div>
+  </div>
+
+  <!-- ── Welcome onboarding modal (welcome=1) ──────────────────────────── -->
+  <div id="welcome-modal" class="welcome-modal hidden">
+    <div class="welcome-box">
+      <button class="welcome-x" id="welcome-x" title="Dismiss">×</button>
+      <div class="welcome-icon">🎉</div>
+      <h2 class="welcome-title">Welcome to ReviewPilot<span id="welcome-name"></span>!</h2>
+      <p class="welcome-sub">Here's how to get your first review in 5 minutes:</p>
+      <div class="welcome-steps">
+        <div class="welcome-step">
+          <div class="welcome-step-num">1</div>
+          <div class="welcome-step-body">
+            <div class="welcome-step-title">📱 Add your first customer</div>
+            <div class="welcome-step-desc">Fill out the "Send Review Request" card on the left — they'll get an SMS instantly.</div>
+          </div>
+        </div>
+        <div class="welcome-step">
+          <div class="welcome-step-num">2</div>
+          <div class="welcome-step-body">
+            <div class="welcome-step-title">🔗 Customize your Google review link</div>
+            <div class="welcome-step-desc">Grab your link from your Google Business Profile and drop it in the form (or set it as the default in env).</div>
+          </div>
+        </div>
+        <div class="welcome-step">
+          <div class="welcome-step-num">3</div>
+          <div class="welcome-step-body">
+            <div class="welcome-step-title">⭐ Watch the 5-star reviews roll in</div>
+            <div class="welcome-step-desc">Your customer gets a text, leaves a Google review, and our AI drafts the perfect reply for you.</div>
+          </div>
+        </div>
+      </div>
+      <button class="welcome-btn" id="welcome-go">Got it, let's go →</button>
+    </div>
+  </div>
+
   <!-- ── Header ────────────────────────────────────────────────────────── -->
   <header class="header">
     <div class="header-left">
@@ -58,6 +112,7 @@
         <div style="font-size:11px;font-weight:600" id="user-plan"></div>
       </div>
       <a href="/api/stripe/portal" style="font-size:12px;color:#1d4ed8;white-space:nowrap;text-decoration:underline">Manage Plan</a>
+      <a href="/account" style="font-size:12px;color:#374151;white-space:nowrap;text-decoration:none;padding:6px 10px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:7px;font-weight:600">Settings ⚙</a>
       <button id="logout-btn" style="font-size:12px;padding:6px 12px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:7px;cursor:pointer;font-weight:600;color:#374151">Log Out</button>
     </div>
   </header>
@@ -111,6 +166,17 @@
             <span class="spinner hidden" id="sms-spinner"></span>
           </button>
         </form>
+      </div>
+
+      <!-- Customers card -->
+      <div class="card">
+        <div class="card-hd">
+          <h2 class="card-title">Your Customers</h2>
+          <p class="card-sub">Auto follow-ups send 3 days after the initial text</p>
+        </div>
+        <div id="customers-list" class="customers-list">
+          <div class="empty-state">No customers yet. Send your first review request above ↑</div>
+        </div>
       </div>
 
       <!-- Simulate Incoming Review card -->
@@ -201,7 +267,7 @@
   <div id="toasts"></div>
 
   <script>
-    // Load user info
+    // ── Load user info ───────────────────────────────────────────────────
     fetch('/api/auth/me')
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(user => {
@@ -211,10 +277,12 @@
         if (bizEl)  bizEl.textContent  = user.businessName || 'Your Business';
         // Show trial/plan info
         const planEl = document.getElementById('user-plan');
+        const trialEnd = new Date(user.trialEndsAt);
+        const daysLeft = Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000));
+        const isTrial  = user.subscriptionStatus === 'trialing' || user.plan === 'trial';
+        const isActive = user.subscriptionStatus === 'active';
         if (planEl) {
-          const trialEnd = new Date(user.trialEndsAt);
-          const daysLeft = Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000));
-          if (user.subscriptionStatus === 'trialing' || user.plan === 'trial') {
+          if (isTrial && !isActive) {
             planEl.textContent = daysLeft > 0 ? `Free Trial — ${daysLeft} days left` : 'Trial Ended';
             planEl.style.color = daysLeft <= 3 ? '#dc2626' : '#059669';
           } else {
@@ -222,10 +290,139 @@
             planEl.style.color = '#059669';
           }
         }
+
+        // Trial banner logic
+        const banner   = document.getElementById('trial-banner');
+        const bIcon    = document.getElementById('trial-banner-icon');
+        const bText    = document.getElementById('trial-banner-text');
+        const bBtn     = document.getElementById('trial-banner-btn');
+        const bX       = document.getElementById('trial-banner-x');
+        const expired  = document.getElementById('trial-expired');
+        const dismissed = sessionStorage.getItem('rp_trial_banner_dismissed') === '1';
+
+        if (isTrial && !isActive) {
+          if (daysLeft <= 0) {
+            // Trial expired — block dashboard
+            expired.classList.remove('hidden');
+          } else if (daysLeft <= 3 && !dismissed) {
+            banner.classList.remove('hidden');
+            banner.classList.add('warn');
+            bIcon.textContent = '⏰';
+            bText.textContent = `Your free trial ends in ${daysLeft} day${daysLeft === 1 ? '' : 's'}. Upgrade now to keep your customer list and automation running.`;
+            bBtn.textContent  = 'Upgrade Now →';
+          }
+        }
+        bX?.addEventListener('click', () => {
+          banner.classList.add('hidden');
+          sessionStorage.setItem('rp_trial_banner_dismissed', '1');
+        });
+
+        // Welcome modal
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('welcome') === '1') {
+          const modal = document.getElementById('welcome-modal');
+          const wname = document.getElementById('welcome-name');
+          if (user.name) wname.textContent = ', ' + user.name.split(' ')[0];
+          modal.classList.remove('hidden');
+          const close = () => { modal.classList.add('hidden'); window.history.replaceState({}, '', '/dashboard'); };
+          document.getElementById('welcome-x').addEventListener('click', close);
+          document.getElementById('welcome-go').addEventListener('click', close);
+        }
       })
       .catch(() => { window.location.href = '/login'; });
 
-    // Logout button
+    // ── Real stats from /api/stats ────────────────────────────────────────
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/stats');
+        if (!res.ok) return;
+        const s = await res.json();
+        const a = document.getElementById('stat-sms');     if (a) a.textContent = s.smsSent;
+        const b = document.getElementById('stat-reviews'); if (b) b.textContent = s.reviews;
+        const c = document.getElementById('stat-rating');  if (c) c.textContent = s.avgRating == null ? '–' : s.avgRating;
+        const d = document.getElementById('stat-replies'); if (d) d.textContent = s.replies;
+      } catch {}
+    }
+    loadStats();
+    setInterval(loadStats, 12000);
+
+    // ── Customers list ────────────────────────────────────────────────────
+    async function loadCustomers() {
+      try {
+        const res = await fetch('/api/customers');
+        if (!res.ok) return;
+        const list = await res.json();
+        renderCustomers(list);
+      } catch {}
+    }
+    function renderCustomers(list) {
+      const box = document.getElementById('customers-list');
+      if (!box) return;
+      if (!list || list.length === 0) {
+        box.innerHTML = '<div class="empty-state">No customers yet. Send your first review request above ↑</div>';
+        return;
+      }
+      box.innerHTML = list.map(c => {
+        const last4  = (c.phone || '').slice(-4);
+        const status = c.status || 'pending';
+        const cls    = {
+          'pending':       'badge-pending',
+          'sent':          'badge-sent',
+          'followup_sent': 'badge-followup',
+          'reviewed':      'badge-reviewed',
+          'completed':     'badge-reviewed',
+        }[status] || 'badge-pending';
+        const label = {
+          'pending':       'Not sent',
+          'sent':          'SMS sent',
+          'followup_sent': 'Follow-up sent',
+          'reviewed':      'Reviewed ⭐',
+          'completed':     'Completed',
+        }[status] || status;
+        const safe = s => String(s ?? '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+        return `
+          <div class="customer-item" data-id="${safe(c.id)}">
+            <div class="customer-top">
+              <div class="customer-name">${safe(c.name)}</div>
+              <span class="customer-badge ${cls}">${label}</span>
+            </div>
+            <div class="customer-sub">···${safe(last4)} · ${safe(c.service || '')}${c.city ? ' · ' + safe(c.city) : ''}</div>
+            <div class="customer-actions">
+              <button data-act="followup" data-id="${safe(c.id)}" class="cust-btn">Send Follow-up</button>
+              <button data-act="reviewed" data-id="${safe(c.id)}" class="cust-btn cust-btn-ok">Mark Reviewed</button>
+              <button data-act="remove"   data-id="${safe(c.id)}" class="cust-btn cust-btn-x">Remove</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Wire buttons
+      box.querySelectorAll('button[data-act]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id  = btn.dataset.id;
+          const act = btn.dataset.act;
+          btn.disabled = true;
+          try {
+            if (act === 'followup') await fetch(`/api/customers/${id}/send-followup`, { method: 'POST' });
+            if (act === 'reviewed') await fetch(`/api/customers/${id}/mark-reviewed`, { method: 'POST' });
+            if (act === 'remove') {
+              if (!confirm('Remove this customer?')) { btn.disabled = false; return; }
+              await fetch(`/api/customers/${id}`, { method: 'DELETE' });
+            }
+          } catch {}
+          await loadCustomers();
+          await loadStats();
+        });
+      });
+    }
+    loadCustomers();
+
+    // Refresh customers list after the SMS form submits
+    document.getElementById('sms-form')?.addEventListener('submit', () => {
+      setTimeout(() => { loadCustomers(); loadStats(); }, 800);
+    });
+
+    // ── Logout button ────────────────────────────────────────────────────
     document.getElementById('logout-btn')?.addEventListener('click', async () => {
       await fetch('/api/auth/logout', { method: 'POST' });
       window.location.href = '/';

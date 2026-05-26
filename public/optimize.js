@@ -207,6 +207,31 @@ function renderResults(a) {
   renderCalendar(a.contentCalendar);
   renderKeywords(a.keywords);
   renderChecklist(a.completenessItems);
+
+  // Lead-magnet lock for non-logged-in visitors
+  applyAuthLock();
+}
+
+async function applyAuthLock() {
+  let loggedIn = false;
+  try {
+    const r = await fetch('/api/auth/me');
+    loggedIn = r.ok;
+  } catch { loggedIn = false; }
+  if (loggedIn) return; // logged in users see everything
+
+  // Lock everything except score + description
+  const lockedIds = ['card-categories', 'card-quickwins', 'card-photos', 'card-qa', 'card-calendar', 'card-keywords', 'card-checklist'];
+  lockedIds.forEach(id => {
+    const card = document.getElementById(id);
+    if (!card) return;
+    card.classList.add('opt-card-locked');
+    const overlay = document.createElement('a');
+    overlay.className = 'lock-overlay';
+    overlay.href = '/signup';
+    overlay.innerHTML = '🔒 Sign up free to unlock the full report';
+    card.appendChild(overlay);
+  });
 }
 
 /* ── Score ───────────────────────────────────────────────────────────────── */

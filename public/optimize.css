@@ -300,6 +300,25 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Lead-magnet lock for non-logged-in users */
+.opt-card-locked { position: relative; overflow: hidden; max-height: 360px; }
+.opt-card-locked::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 60%);
+  pointer-events: none;
+}
+.lock-overlay {
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 2;
+  background: var(--navy);
+  color: white; padding: 12px 24px; border-radius: 8px;
+  font-weight: 600; font-size: 14px; text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  white-space: nowrap;
+}
+.lock-overlay:hover { background: var(--amber); color: var(--navy); }
+
 /* Card header */
 .card-title {
   display: flex;

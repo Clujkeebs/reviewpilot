@@ -14,6 +14,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'reviewpilot-dev-secret-change-in-p
 // ── Data persistence ─────────────────────────────────────────────────────────
 const DATA_DIR  = path.join(__dirname, 'data');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
+const CUSTOMERS_FILE = path.join(DATA_DIR, 'customers.json');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
 
@@ -24,8 +25,16 @@ function loadUsers() {
 function saveUsers(users) {
   fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 }
+function loadCustomers() {
+  try { return JSON.parse(fs.readFileSync(CUSTOMERS_FILE, 'utf8')); }
+  catch { return []; }
+}
+function saveCustomers(c) {
+  fs.writeFileSync(CUSTOMERS_FILE, JSON.stringify(c, null, 2));
+}
 
 let users        = loadUsers();
+let customers    = loadCustomers();
 const activityFeed = [];
 
 // ── Stripe setup ──────────────────────────────────────────────────────────────
@@ -214,8 +223,83 @@ app.post('/api/auth/logout', (req, res) => {
 app.get('/api/auth/me', (req, res) => {
   const user = getUser(req);
   if (!user) return res.status(401).json({ error: 'Not authenticated' });
-  const { passwordHash, ...safe } = user;
+  const { passwordHash, resetToken, resetExpires, ...safe } = user;
   res.json(safe);
+});
+
+// PATCH /api/auth/me — update profile
+app.patch('/api/auth/me', requireAuth, (req, res) => {
+  users = loadUsers();
+  const user = users.find(u => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: 'User not found.' });
+  const { name, businessName, trade, phone } = req.body;
+  if (typeof name === 'string')         user.name = name.trim();
+  if (typeof businessName === 'string') user.businessName = businessName.trim();
+  if (typeof trade === 'string')        user.trade = trade.trim();
+  if (typeof phone === 'string')        user.phone = phone.trim();
+  saveUsers(users);
+  const { passwordHash, resetToken, resetExpires, ...safe } = user;
+  res.json({ success: true, user: safe });
+});
+
+// POST /api/auth/change-password
+app.post('/api/auth/change-password', requireAuth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Current and new password are required.' });
+  if (newPassword.length < 8)            return res.status(400).json({ error: 'New password must be at least 8 characters.' });
+  users = loadUsers();
+  const user = users.find(u => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: 'User not found.' });
+  const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+  if (!valid) return res.status(401).json({ error: 'Current password is incorrect.' });
+  user.passwordHash = await bcrypt.hash(newPassword, 10);
+  saveUsers(users);
+  res.json({ success: true });
+});
+
+// POST /api/auth/delete-account
+app.post('/api/auth/delete-account', requireAuth, (req, res) => {
+  users = loadUsers();
+  customers = loadCustomers();
+  users = users.filter(u => u.id !== req.user.id);
+  customers = customers.filter(c => c.userId !== req.user.id);
+  saveUsers(users);
+  saveCustomers(customers);
+  res.clearCookie('rp_token');
+  res.json({ success: true, redirect: '/' });
+});
+
+// POST /api/auth/forgot-password
+app.post('/api/auth/forgot-password', (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email is required.' });
+  users = loadUsers();
+  const user = users.find(u => u.email === email.toLowerCase().trim());
+  if (user) {
+    const token = require('crypto').randomBytes(32).toString('hex');
+    user.resetToken   = token;
+    user.resetExpires = Date.now() + 60 * 60 * 1000; // 1 hour
+    saveUsers(users);
+    const url = `${process.env.APP_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
+    console.log(`[Password Reset] ${user.email} → ${url}`);
+  }
+  // Always respond success so we don't leak whether the email exists
+  res.json({ success: true, message: 'If that email exists, a reset link has been sent.' });
+});
+
+// POST /api/auth/reset-password
+app.post('/api/auth/reset-password', async (req, res) => {
+  const { token, newPassword } = req.body;
+  if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password are required.' });
+  if (newPassword.length < 8)  return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+  users = loadUsers();
+  const user = users.find(u => u.resetToken === token && Number(u.resetExpires) > Date.now());
+  if (!user) return res.status(400).json({ error: 'This reset link is invalid or has expired.' });
+  user.passwordHash = await bcrypt.hash(newPassword, 10);
+  delete user.resetToken;
+  delete user.resetExpires;
+  saveUsers(users);
+  res.json({ success: true, redirect: '/login' });
 });
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -312,19 +396,145 @@ app.post('/api/send-request', requireAuth, async (req, res) => {
 
   const entry = { id: Date.now(), type: 'sms_sent', timestamp: new Date().toISOString(), customerName: customerName.trim(), phone: phone.trim(), service: service.trim(), city: (city || '').trim(), message: smsBody, status: 'pending', twilioSid: null, error: null };
 
+  let twilioOk = false;
   try {
     const result    = await sendTwilioSMS(phone.trim(), smsBody);
     entry.status    = 'delivered';
     entry.twilioSid = result.sid;
-    activityFeed.unshift(entry);
-    return res.json({ success: true, entry });
+    twilioOk = true;
   } catch (err) {
     entry.status = 'failed';
     entry.error  = err.message;
-    activityFeed.unshift(entry);
     console.error('[Twilio]', err.message);
-    return res.status(502).json({ error: err.message, entry });
   }
+  activityFeed.unshift(entry);
+
+  // Persist as a customer record for this user (even if Twilio failed, so user can retry follow-up)
+  try {
+    customers = loadCustomers();
+    const customer = {
+      id: 'c_' + Date.now(),
+      userId: req.user.id,
+      name: customerName.trim(),
+      phone: phone.trim(),
+      service: service.trim(),
+      city: (city || '').trim(),
+      addedAt: new Date().toISOString(),
+      status: twilioOk ? 'sent' : 'pending',
+      lastSmsAt: twilioOk ? new Date().toISOString() : null,
+      followUpAt: null,
+      smsCount: twilioOk ? 1 : 0,
+    };
+    customers.push(customer);
+    saveCustomers(customers);
+  } catch (err) {
+    console.error('[Customers] failed to persist customer:', err.message);
+  }
+
+  if (twilioOk) return res.json({ success: true, entry });
+  return res.status(502).json({ error: entry.error, entry });
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// CUSTOMERS API
+// ════════════════════════════════════════════════════════════════════════════
+
+// POST /api/customers — add a new customer (auto-sends initial SMS)
+app.post('/api/customers', requireAuth, async (req, res) => {
+  const { name, phone, service, city } = req.body;
+  if (!name || !phone || !service) return res.status(400).json({ error: 'name, phone, and service are required.' });
+  customers = loadCustomers();
+
+  const customer = {
+    id: 'c_' + Date.now(),
+    userId: req.user.id,
+    name: name.trim(),
+    phone: phone.trim(),
+    service: service.trim(),
+    city: (city || '').trim(),
+    addedAt: new Date().toISOString(),
+    status: 'pending',
+    lastSmsAt: null,
+    followUpAt: null,
+    smsCount: 0,
+  };
+
+  // Attempt initial SMS — gracefully no-op if Twilio isn't configured
+  const link    = process.env.DEFAULT_REVIEW_LINK || 'https://g.page/r/your-review-link';
+  const smsBody = `Hi ${customer.name}, thanks for choosing us for your ${customer.service}! Could you leave us a quick Google review? It only takes 30 seconds: ${link}`;
+  try {
+    await sendTwilioSMS(customer.phone, smsBody);
+    customer.status    = 'sent';
+    customer.lastSmsAt = new Date().toISOString();
+    customer.smsCount  = 1;
+  } catch (err) {
+    console.warn('[Customers] initial SMS skipped:', err.message);
+  }
+
+  customers.push(customer);
+  saveCustomers(customers);
+  res.json({ success: true, customer });
+});
+
+// GET /api/customers — list current user's customers
+app.get('/api/customers', requireAuth, (req, res) => {
+  customers = loadCustomers();
+  const mine = customers.filter(c => c.userId === req.user.id).sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
+  res.json(mine);
+});
+
+// POST /api/customers/:id/send-followup
+app.post('/api/customers/:id/send-followup', requireAuth, async (req, res) => {
+  customers = loadCustomers();
+  const customer = customers.find(c => c.id === req.params.id && c.userId === req.user.id);
+  if (!customer) return res.status(404).json({ error: 'Customer not found.' });
+  const link    = process.env.DEFAULT_REVIEW_LINK || 'https://g.page/r/your-review-link';
+  const body    = `Hi ${customer.name}, just a friendly reminder — we'd love a quick Google review for the ${customer.service} we did. Takes 30 seconds: ${link}. Thanks!`;
+  try {
+    await sendTwilioSMS(customer.phone, body);
+    customer.lastSmsAt = new Date().toISOString();
+    customer.smsCount  = (customer.smsCount || 0) + 1;
+    customer.status    = 'followup_sent';
+    saveCustomers(customers);
+    res.json({ success: true, customer });
+  } catch (err) {
+    console.error('[Customer Followup]', err.message);
+    res.status(502).json({ error: err.message });
+  }
+});
+
+// DELETE /api/customers/:id
+app.delete('/api/customers/:id', requireAuth, (req, res) => {
+  customers = loadCustomers();
+  const before = customers.length;
+  customers = customers.filter(c => !(c.id === req.params.id && c.userId === req.user.id));
+  if (customers.length === before) return res.status(404).json({ error: 'Customer not found.' });
+  saveCustomers(customers);
+  res.json({ success: true });
+});
+
+// POST /api/customers/:id/mark-reviewed
+app.post('/api/customers/:id/mark-reviewed', requireAuth, (req, res) => {
+  customers = loadCustomers();
+  const customer = customers.find(c => c.id === req.params.id && c.userId === req.user.id);
+  if (!customer) return res.status(404).json({ error: 'Customer not found.' });
+  customer.status = 'reviewed';
+  saveCustomers(customers);
+  res.json({ success: true, customer });
+});
+
+// GET /api/stats — real dashboard stats for current user
+app.get('/api/stats', requireAuth, (req, res) => {
+  customers = loadCustomers();
+  const mine = customers.filter(c => c.userId === req.user.id);
+  const smsSent = mine.filter(c => c.status === 'sent' || c.status === 'followup_sent' || c.status === 'reviewed' || c.status === 'completed').length;
+  const reviews = mine.filter(c => c.status === 'reviewed' || c.status === 'completed').length;
+  const reviewEntries = activityFeed.filter(i => i.type === 'review_received');
+  const avgRating = reviewEntries.length
+    ? (reviewEntries.reduce((s, i) => s + (Number(i.rating) || 0), 0) / reviewEntries.length).toFixed(1)
+    : null;
+  const replies = reviewEntries.length;
+  res.json({ smsSent, reviews, avgRating, replies });
 });
 
 // POST /api/webhook/review
@@ -377,8 +587,37 @@ app.get('/signup',              (_req, res) => res.sendFile(path.join(__dirname,
 app.get('/pricing',             (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/ranking-calculator',  (_req, res) => res.sendFile(path.join(__dirname, 'public', 'ranking-calculator.html')));
 app.get('/dashboard',           requireAuth, requireSubscription, (_req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
-app.get('/optimize',            requireAuth, requireSubscription, (_req, res) => res.sendFile(path.join(__dirname, 'public', 'optimize.html')));
+app.get('/optimize',            (_req, res) => res.sendFile(path.join(__dirname, 'public', 'optimize.html')));
+app.get('/account',             requireAuth, (_req, res) => res.sendFile(path.join(__dirname, 'public', 'account.html')));
+app.get('/reset-password',      (_req, res) => res.sendFile(path.join(__dirname, 'public', 'reset-password.html')));
 app.get('/health',              (_req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));
+
+// ── Automated follow-up scheduler ─────────────────────────────────────────────
+// Every 5 minutes: send a single follow-up SMS to customers who got the initial
+// SMS at least 3 days ago and haven't reviewed yet (max 2 total SMS per customer).
+setInterval(async () => {
+  customers = loadCustomers();
+  const now = Date.now();
+  for (const c of customers) {
+    if (c.status === 'sent' && c.smsCount < 2 && c.lastSmsAt) {
+      const daysSince = (now - new Date(c.lastSmsAt).getTime()) / (1000 * 60 * 60 * 24);
+      if (daysSince >= 3) {
+        try {
+          const user = users.find(u => u.id === c.userId);
+          if (!user) continue;
+          const reviewLink = process.env.DEFAULT_REVIEW_LINK || 'https://g.page/r/your-link';
+          const body = `Hi ${c.name}, just a friendly reminder — we'd love a quick Google review for the ${c.service} we did. Takes 30 seconds: ${reviewLink}. Thanks!`;
+          await sendTwilioSMS(c.phone, body);
+          c.lastSmsAt = new Date().toISOString();
+          c.smsCount  = (c.smsCount || 1) + 1;
+          c.status    = 'followup_sent';
+          saveCustomers(customers);
+          console.log(`[Auto-Followup] sent to ${c.name} (${c.phone})`);
+        } catch (err) { console.error('[Auto-Followup]', err.message); }
+      }
+    }
+  }
+}, 5 * 60 * 1000);
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
