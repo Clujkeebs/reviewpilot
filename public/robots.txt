@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /dashboard
+Disallow: /optimize
+Disallow: /account
 Disallow: /api/
 Sitemap: https://reviewpilot.app/sitemap.xml

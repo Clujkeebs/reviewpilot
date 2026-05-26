@@ -622,6 +622,11 @@ app.get('/account',             requireAuth, (_req, res) => res.sendFile(path.jo
 app.get('/reset-password',      (_req, res) => res.sendFile(path.join(__dirname, 'public', 'reset-password.html')));
 app.get('/health',              (_req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));
 
+// ── 404 catch-all ────────────────────────────────────────────────────────────
+app.use((_req, res) => {
+  res.status(404).send(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Page Not Found — ReviewPilot</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"/><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Inter',system-ui,sans-serif;background:#f3f4f6;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}.wrap{text-align:center;max-width:440px}.ico{font-size:64px;margin-bottom:16px}h1{font-size:28px;font-weight:800;color:#0f2340;margin-bottom:8px}p{font-size:15px;color:#6b7280;line-height:1.6;margin-bottom:24px}a{display:inline-block;padding:12px 28px;background:#0f2340;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;transition:background .15s}a:hover{background:#163352}</style></head><body><div class="wrap"><div class="ico">📍</div><h1>Page not found</h1><p>The page you're looking for doesn't exist or has been moved. Let's get you back on track.</p><a href="/">← Back to ReviewPilot</a></div></body></html>`);
+});
+
 // ── Automated follow-up scheduler ─────────────────────────────────────────────
 // Every 5 minutes: send a single follow-up SMS to customers who got the initial
 // SMS at least 3 days ago and haven't reviewed yet (max 2 total SMS per customer).
