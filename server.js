@@ -345,6 +345,11 @@ app.post('/api/optimize', async (req, res) => {
   }
 });
 
+// ── GET /ranking-calculator ───────────────────────────────────────────────
+app.get('/ranking-calculator', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'ranking-calculator.html'));
+});
+
 // ── Start ────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`\n  ReviewPilot running → http://localhost:${PORT}\n`);

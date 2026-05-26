@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <title>Free Google Maps Ranking Calculator — See How You Rank in Your City | ReviewPilot</title>
+  <meta name="description" content="Find out your Google Maps ranking score for free. Enter your business details and instantly see how you compare to top competitors — and exactly what to fix to rank #1." />
+  <link rel="canonical" href="https://reviewpilot.app/ranking-calculator" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://reviewpilot.app/ranking-calculator" />
+  <meta property="og:title" content="Free Google Maps Ranking Calculator — See How You Rank | ReviewPilot" />
+  <meta property="og:description" content="Find out your Google Maps ranking score for free. Enter your business details and instantly see how you compare to top competitors — and exactly what to fix to rank #1." />
+  <meta property="og:image" content="https://reviewpilot.app/og-image.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Free Google Maps Ranking Calculator | ReviewPilot" />
+  <meta name="twitter:description" content="Instantly see your Google Maps ranking score and exactly what to fix to rank #1 in your city." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="ranking-calculator.css" />
+
+  <style>
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="rc-header">
+    <a href="/" class="rc-back">← ReviewPilot Home</a>
+    <div class="rc-logo">
+      <span>📍</span>
+      <span>ReviewPilot</span>
+    </div>
+    <span class="rc-badge">Free Tool</span>
+  </header>
+
+  <!-- ── Hero + Form ── -->
+  <section class="rc-hero">
+    <div class="rc-hero-inner">
+
+      <div class="rc-hero-copy">
+        <div class="rc-kicker">Free Google Maps Ranking Tool</div>
+        <h1 class="rc-h1">Google Maps Ranking Calculator</h1>
+        <p class="rc-sub">Enter your business details below and get your Google Maps Ranking Score in seconds — with a complete breakdown of where you stand versus the top competitor in your city.</p>
+      </div>
+
+      <div class="rc-form-card">
+        <form id="rc-form" novalidate>
+
+          <div class="rc-form-grid">
+
+            <!-- Trade -->
+            <div class="rc-field">
+              <label class="rc-lbl" for="rc-trade">Business Type</label>
+              <select class="rc-select" id="rc-trade" name="trade" required>
+                <option value="hvac">HVAC</option>
+                <option value="plumbing">Plumbing</option>
+                <option value="electrical">Electrical</option>
+                <option value="roofing">Roofing</option>
+                <option value="landscaping">Landscaping</option>
+                <option value="pest">Pest Control</option>
+                <option value="cleaning">House Cleaning</option>
+                <option value="auto">Auto Repair</option>
+                <option value="appliance">Appliance Repair</option>
+                <option value="painting">Painting</option>
+                <option value="flooring">Flooring</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <!-- City -->
+            <div class="rc-field">
+              <label class="rc-lbl" for="rc-city">City <span class="rc-lbl-sub">(e.g. Austin, TX)</span></label>
+              <input class="rc-inp" type="text" id="rc-city" name="city" placeholder="Austin, TX" />
+            </div>
+
+            <!-- City size -->
+            <div class="rc-field">
+              <label class="rc-lbl" for="rc-city-size">City Size</label>
+              <select class="rc-select" id="rc-city-size" name="citySize" required>
+                <option value="small">Small Town (under 50k people)</option>
+                <option value="suburb" selected>Suburb (50k–200k)</option>
+                <option value="mid">Mid-Size City (200k–500k)</option>
+                <option value="major">Major City (500k+)</option>
+              </select>
+            </div>
+
+            <!-- Review count -->
+            <div class="rc-field">
+              <label class="rc-lbl" for="rc-reviews">Current Google Reviews</label>
+              <input class="rc-inp" type="number" id="rc-reviews" name="reviews" min="0" max="9999" placeholder="0" value="" />
+            </div>
+
+            <!-- Rating slider — full width -->
+            <div class="rc-field rc-field-full">
+              <label class="rc-lbl">Average Star Rating</label>
+              <div class="rc-slider-wrap">
+                <input class="rc-slider" type="range" id="rc-rating" name="rating"
+                  min="1.0" max="5.0" step="0.1" value="4.0" />
+                <div class="rc-slider-val" id="rc-rating-val">4.0★</div>
+              </div>
+            </div>
+
+            <!-- Response rate — full width -->
+            <div class="rc-field rc-field-full">
+              <label class="rc-lbl">Do you reply to Google reviews?</label>
+              <div class="rc-radio-group">
+                <input type="radio" id="resp-always" name="response" value="always" />
+                <label for="resp-always">Yes, always</label>
+
+                <input type="radio" id="resp-sometimes" name="response" value="sometimes" />
+                <label for="resp-sometimes">Sometimes</label>
+
+                <input type="radio" id="resp-rarely" name="response" value="rarely" />
+                <label for="resp-rarely">Rarely</label>
+
+                <input type="radio" id="resp-never" name="response" value="never" />
+                <label for="resp-never">Never</label>
+              </div>
+            </div>
+
+            <!-- Profile completeness — full width -->
+            <div class="rc-field rc-field-full">
+              <label class="rc-lbl">How complete is your Google Business Profile?</label>
+              <div class="rc-radio-group">
+                <input type="radio" id="prof-full" name="profile" value="full" />
+                <label for="prof-full">Fully filled out</label>
+
+                <input type="radio" id="prof-partial" name="profile" value="partial" />
+                <label for="prof-partial">Partially filled</label>
+
+                <input type="radio" id="prof-bare" name="profile" value="bare" />
+                <label for="prof-bare">Barely filled out</label>
+              </div>
+            </div>
+
+            <!-- Posts — full width -->
+            <div class="rc-field rc-field-full">
+              <label class="rc-lbl">How often do you post on Google?</label>
+              <div class="rc-radio-group">
+                <input type="radio" id="posts-weekly" name="posts" value="weekly" />
+                <label for="posts-weekly">Weekly</label>
+
+                <input type="radio" id="posts-monthly" name="posts" value="monthly" />
+                <label for="posts-monthly">Monthly</label>
+
+                <input type="radio" id="posts-rarely" name="posts" value="rarely" />
+                <label for="posts-rarely">Rarely</label>
+
+                <input type="radio" id="posts-never" name="posts" value="never" />
+                <label for="posts-never">Never</label>
+              </div>
+            </div>
+
+          </div><!-- /grid -->
+
+          <button class="rc-submit-btn" type="submit" id="rc-submit-btn">
+            <span id="rc-btn-txt">Calculate My Ranking Score →</span>
+            <span class="rc-spinner" id="rc-spinner"></span>
+          </button>
+
+        </form>
+      </div><!-- /form-card -->
+
+    </div>
+  </section>
+
+  <!-- ── Results ── -->
+  <div class="rc-results" id="rc-results">
+
+    <!-- Score ring -->
+    <div class="score-ring-card">
+      <div class="score-ring-wrap">
+        <svg class="score-ring-svg" viewBox="0 0 60 60">
+          <circle class="score-ring-bg" cx="30" cy="30" r="26" />
+          <circle class="score-ring-fg" id="score-ring-fg" cx="30" cy="30" r="26" />
+        </svg>
+        <div class="score-ring-label">
+          <div class="score-ring-num" id="score-ring-num">0</div>
+          <div class="score-ring-max">/100</div>
+        </div>
+      </div>
+      <div class="score-copy">
+        <div class="score-grade" id="res-grade">Score</div>
+        <div class="score-verdict" id="res-verdict"></div>
+        <div class="score-meta" id="res-meta"></div>
+      </div>
+    </div>
+
+    <!-- Breakdown -->
+    <div class="rc-card">
+      <div class="rc-card-title">
+        <div class="rc-card-title-icon">📊</div>
+        Score Breakdown
+      </div>
+      <div class="breakdown-grid" id="breakdown-grid"></div>
+    </div>
+
+    <!-- Competitor comparison -->
+    <div class="rc-card">
+      <div class="rc-card-title">
+        <div class="rc-card-title-icon">🏆</div>
+        Competitor Comparison
+      </div>
+      <div id="res-comp"></div>
+    </div>
+
+    <!-- Top issues -->
+    <div class="rc-card">
+      <div class="rc-card-title">
+        <div class="rc-card-title-icon">⚠️</div>
+        Your Top Issues
+      </div>
+      <div id="res-issues"></div>
+    </div>
+
+    <!-- What you need -->
+    <div class="rc-card">
+      <div class="rc-card-title">
+        <div class="rc-card-title-icon">🎯</div>
+        What You Need to Reach #1
+      </div>
+      <div id="res-gaps"></div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-card">
+      <div class="cta-eyebrow">The Fastest Path to #1</div>
+      <h2 class="cta-h2">ReviewPilot Gets You There Automatically</h2>
+      <p class="cta-desc">Stop losing customers to competitors with better profiles. ReviewPilot automates review requests, writes AI replies, and optimizes your entire Google Business Profile.</p>
+      <a href="/signup" class="cta-btn">Start Free 14-Day Trial →</a>
+      <p class="cta-proof"><strong>Businesses using ReviewPilot gain an average of 47 new reviews in the first 30 days.</strong> No credit card required.</p>
+    </div>
+
+    <!-- Reset -->
+    <button class="rc-reset-btn" id="rc-reset-btn">← Try Another Business</button>
+
+  </div><!-- /results -->
+
+  <script src="ranking-calculator.js"></script>
+</body>
+</html>

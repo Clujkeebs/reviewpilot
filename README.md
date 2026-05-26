@@ -1,0 +1,140 @@
+# ReviewPilot 📍
+
+A B2B local SEO & review automation platform for service businesses. Automate Google reviews, generate AI replies, and optimize your Google Business Profile.
+
+## 🚀 Features
+
+### Review Automation
+- Send SMS review requests to customers
+- Generate professional AI replies powered by Claude
+- Automatic activity feed tracking
+
+### GBP Optimizer
+- AI-powered Google Business Profile audit
+- Optimized description generation (copy-paste ready)
+- Category recommendations
+- Photo checklist for optimal ranking
+- Q&A templates pre-filled with local keywords
+- 4-week content calendar
+
+### Dashboard
+- Real-time activity feed
+- Conversation management
+- Lead tracking
+- Professional UI optimized for mobile
+
+## 📋 Prerequisites
+
+- Node.js 18+
+- npm
+- Anthropic API key (free trial available)
+- (Optional) Twilio account for SMS
+
+## ⚡ Quick Start
+
+### Local Development
+```bash
+npm install
+npm start
+# Open http://localhost:3000
+```
+
+### Environment Variables
+Create `.env` file:
+```
+ANTHROPIC_API_KEY=sk-ant-...
+TWILIO_ACCOUNT_SID=ACxxxxxxx (optional)
+TWILIO_AUTH_TOKEN=xxxxx (optional)
+TWILIO_PHONE_NUMBER=+1xxxx (optional)
+DEFAULT_REVIEW_LINK=https://g.page/... (optional)
+PORT=3000
+```
+
+## 🌐 Deployment
+
+### Option 1: Render (Recommended)
+1. Create GitHub repo: `reviewpilot`
+2. Push code to GitHub
+3. Go to https://dashboard.render.com
+4. Click "New Web Service"
+5. Connect your `reviewpilot` repo
+6. Set environment variables
+7. Deploy!
+
+### Option 2: Railway
+```bash
+railway link
+railway up
+```
+
+### Option 3: Heroku
+```bash
+heroku create reviewpilot
+heroku config:set ANTHROPIC_API_KEY=sk-ant-...
+git push heroku main
+```
+
+## 📡 API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/` | Landing page |
+| GET | `/dashboard` | Main dashboard |
+| GET | `/signup` | Signup form |
+| GET | `/optimize` | GBP Optimizer tool |
+| POST | `/api/signup` | Create user account |
+| POST | `/api/optimize` | Run GBP analysis |
+| POST | `/api/send-request` | Send review request SMS |
+| POST | `/api/webhook/review` | Receive review webhook |
+| GET | `/api/feed` | Activity feed |
+| GET | `/api/leads` | View all leads |
+| GET | `/health` | Health check |
+
+## 🔑 API Keys
+
+**Anthropic**
+- Get free trial: https://console.anthropic.com
+- Keys limit: 5 requests/minute on free tier
+- Model: claude-sonnet-4-6 (GBP Optimizer), claude-haiku-4-5 (replies)
+
+**Twilio** (Optional)
+- Get trial: https://console.twilio.com
+- Phone number required for SMS
+
+## 📊 Project Structure
+
+```
+├── server.js              # Express backend
+├── package.json           # Dependencies
+├── render.yaml            # Render deployment config
+├── public/
+│   ├── index.html         # Landing page
+│   ├── dashboard.html     # Main dashboard
+│   ├── signup.html        # Signup form
+│   ├── optimize.html      # GBP Optimizer
+│   ├── style.css          # Dashboard styles
+│   ├── landing.css        # Landing styles
+│   ├── signup.css         # Signup styles
+│   ├── optimize.css       # Optimizer styles
+│   └── optimize.js        # Optimizer logic
+└── DEPLOY.md              # Detailed deployment guide
+```
+
+## 🎯 Roadmap
+
+- [ ] User authentication system
+- [ ] Database (PostgreSQL via Supabase)
+- [ ] Multi-user teams
+- [ ] Content calendar scheduling
+- [ ] Analytics dashboard
+- [ ] White-label option
+- [ ] API for partners
+
+## 📄 License
+
+MIT
+
+## 🆘 Support
+
+Email: support@reviewpilot.local  
+Docs: See `DEPLOY.md` for deployment help

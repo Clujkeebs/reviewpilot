@@ -97,6 +97,13 @@ img { display: block; max-width: 100%; }
   font-weight: 600 !important;
   color: var(--blue) !important;
 }
+.nav-link-tool {
+  font-weight: 600 !important;
+  color: var(--amber) !important;
+}
+.nav-link-tool:hover {
+  color: var(--amber-dk) !important;
+}
 
 /* CTA button */
 .btn-nav-cta {
