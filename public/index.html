@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ReviewPilot — Automatic Review Requests & AI Replies for Local Businesses</title>
   <meta name="description" content="Turn every finished job into a 5-star Google review — automatically. ReviewPilot texts your customers and writes AI-powered replies that push your ranking above every competitor in your city." />
@@ -32,7 +33,7 @@
     "offers": {
       "@type": "AggregateOffer",
       "lowPrice": "49",
-      "highPrice": "99",
+      "highPrice": "149",
       "priceCurrency": "USD"
     },
     "aggregateRating": {
@@ -63,11 +64,10 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="/ranking-calculator" class="nav-link-tool">Free Ranking Calculator</a></li>
         <li><a href="#how-it-works">How It Works</a></li>
-        <li><a href="#try-it">Live Preview</a></li>
         <li><a href="#features">Features</a></li>
         <li><a href="#pricing">Pricing</a></li>
         <li><a href="#faq">FAQ</a></li>
-        <li><a href="/dashboard" class="nav-link-dash">Dashboard →</a></li>
+        <li><a href="/login" class="nav-link-dash">Log In →</a></li>
       </ul>
       <a href="/signup" class="btn-nav-cta">Start Free Trial</a>
       <button class="nav-burger" id="nav-burger" aria-label="Toggle menu">
@@ -89,9 +89,9 @@
           <a href="#how-it-works" class="btn-ghost-lg">See How It Works ↓</a>
         </div>
         <div class="hero-trust-row">
-          <span>✓ Free 14-day trial</span>
-          <span>✓ No credit card</span>
-          <span>✓ No sales calls</span>
+          <span>✓ 14-day free trial</span>
+          <span>✓ 30-day money-back guarantee</span>
+          <span>✓ No contracts</span>
           <span>✓ Live in 10 minutes</span>
         </div>
       </div>
@@ -143,31 +143,6 @@
 
     </div>
   </section>
-
-  <!-- ─────────────────────────────── STATS STRIP ── -->
-  <div class="stats-strip">
-    <div class="stats-inner">
-      <div class="stat-item">
-        <span class="stat-num">500+</span>
-        <span class="stat-lbl">Local Businesses</span>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <span class="stat-num">40,000+</span>
-        <span class="stat-lbl">Reviews Generated</span>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <span class="stat-num">4.87 ★</span>
-        <span class="stat-lbl">Avg Client Rating</span>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <span class="stat-num">2.3×</span>
-        <span class="stat-lbl">Avg Ranking Lift</span>
-      </div>
-    </div>
-  </div>
 
   <!-- ─────────────────────────────────────── PROBLEM ── -->
   <section class="section section-light" id="problem">
@@ -260,59 +235,6 @@
           </div>
         </div>
 
-      </div>
-    </div>
-  </section>
-
-  <!-- ──────────────────────────────── TRY IT LIVE ── -->
-  <section class="section section-light" id="try-it">
-    <div class="section-inner">
-      <div class="section-label">TRY IT LIVE</div>
-      <h2 class="section-h2">See exactly what your<br/>customers will receive.</h2>
-      <p class="section-sub">Enter your business details. We'll generate a real preview of the SMS your customers would get and the AI reply we'd write — no signup required.</p>
-
-      <div class="tryit-box">
-        <div class="tryit-inputs">
-          <div class="tryit-field">
-            <label class="tryit-lbl" for="biz-name">Business Name</label>
-            <input class="tryit-inp" type="text" id="biz-name" placeholder="Austin HVAC Pros" />
-          </div>
-          <div class="tryit-field">
-            <label class="tryit-lbl" for="biz-trade">Your Trade</label>
-            <select class="tryit-inp" id="biz-trade">
-              <option value="AC Repair">AC / HVAC</option>
-              <option value="Plumbing">Plumbing</option>
-              <option value="Electrical Work">Electrical</option>
-              <option value="Roof Repair">Roofing</option>
-              <option value="Lawn Care">Landscaping / Lawn Care</option>
-              <option value="Pest Control">Pest Control</option>
-              <option value="House Cleaning">House Cleaning</option>
-              <option value="Auto Repair">Auto Repair</option>
-              <option value="Appliance Repair">Appliance Repair</option>
-              <option value="Interior Painting">Painting</option>
-              <option value="Flooring Installation">Flooring</option>
-              <option value="Window Installation">Windows & Doors</option>
-            </select>
-          </div>
-          <div class="tryit-field">
-            <label class="tryit-lbl" for="biz-city">Your City</label>
-            <input class="tryit-inp" type="text" id="biz-city" placeholder="Austin" />
-          </div>
-          <button class="tryit-btn" id="preview-btn">Preview My Setup →</button>
-        </div>
-
-        <div class="tryit-result hidden" id="tryit-result">
-          <div class="tryit-col">
-            <div class="tryit-col-label">📱 Text Message Your Customer Receives</div>
-            <div class="tryit-sms" id="sms-preview-text"></div>
-          </div>
-          <div class="tryit-divider"></div>
-          <div class="tryit-col">
-            <div class="tryit-col-label">🤖 AI-Generated Google Reply</div>
-            <div class="tryit-ai" id="ai-preview-text"></div>
-            <a href="/signup" class="tryit-cta-btn">Start Free Trial to Use This →</a>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -469,7 +391,7 @@
             <span class="faq-icon">+</span>
           </button>
           <div class="faq-a">
-            <p>Nothing changes automatically. At the end of 14 days, you pick the plan that fits your business and enter a card. No automatic charges during the trial period, and you can cancel anytime with no questions asked.</p>
+            <p>Nothing changes automatically. At the end of 14 days, you pick the plan that fits your business and enter a card. No automatic charges during the trial period, and you can cancel anytime with no questions asked. Plus, we back every plan with a 30-day money-back guarantee — if ReviewPilot doesn't get you more reviews in your first 30 days, we'll refund every penny.</p>
           </div>
         </div>
 
@@ -497,45 +419,60 @@
 
         <div class="pricing-card">
           <div class="pricing-tier">Starter</div>
-          <div class="pricing-price">
-            <span class="price-amount">$49</span>
-            <span class="price-per">/month</span>
-          </div>
-          <div class="pricing-tagline">Best for a single location</div>
+          <div class="pricing-price"><span class="pricing-dollar">$</span>49<span class="pricing-period">/mo</span></div>
+          <div class="pricing-desc">Perfect for owner-operators sending 1–3 jobs a day.</div>
           <ul class="pricing-features">
-            <li>✓ Unlimited SMS review requests</li>
-            <li>✓ AI-generated reply per review</li>
-            <li>✓ 1 business location</li>
-            <li>✓ Google Business webhook</li>
-            <li>✓ Activity feed + copy-to-clipboard</li>
-            <li>✓ GBP Optimizer (1 audit/month)</li>
+            <li>✓ Up to 150 SMS review requests/month</li>
+            <li>✓ Unlimited AI-generated review replies</li>
+            <li>✓ GBP Optimizer (3 audits/month)</li>
+            <li>✓ Activity feed & lead tracking</li>
             <li>✓ Email support</li>
           </ul>
-          <a href="/signup?plan=starter" class="pricing-cta">Start Free Trial</a>
+          <a href="/signup?plan=starter" class="pricing-cta">Start Free Trial →</a>
+          <p class="pricing-note">14-day free trial · No credit card required</p>
         </div>
 
-        <div class="pricing-card pricing-popular">
-          <div class="popular-badge">Most Popular</div>
-          <div class="pricing-tier">Pro</div>
-          <div class="pricing-price">
-            <span class="price-amount">$99</span>
-            <span class="price-per">/month</span>
-          </div>
-          <div class="pricing-tagline">Best for growing businesses</div>
+        <div class="pricing-card pricing-featured">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-tier">Growth</div>
+          <div class="pricing-price"><span class="pricing-dollar">$</span>99<span class="pricing-period">/mo</span></div>
+          <div class="pricing-desc">For growing teams who want automation on every job.</div>
           <ul class="pricing-features">
-            <li>✓ Everything in Starter</li>
-            <li>✓ Up to 5 locations</li>
-            <li>✓ Monthly Google ranking report</li>
-            <li>✓ GBP Optimizer (unlimited audits)</li>
-            <li>✓ Competitor review tracking</li>
-            <li>✓ Priority support</li>
-            <li>✓ 1-on-1 onboarding call</li>
+            <li>✓ Up to 600 SMS review requests/month</li>
+            <li>✓ Unlimited AI-generated review replies</li>
+            <li>✓ Unlimited GBP Optimizer audits</li>
+            <li>✓ Automated follow-up sequences</li>
+            <li>✓ Weekly ranking report (email)</li>
+            <li>✓ Priority email & chat support</li>
           </ul>
-          <a href="/signup?plan=pro" class="pricing-cta pricing-cta-featured">Start Free Trial</a>
+          <a href="/signup?plan=growth" class="pricing-cta pricing-cta-featured">Start Free Trial →</a>
+          <p class="pricing-note">14-day free trial · No credit card required</p>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-tier">Pro</div>
+          <div class="pricing-price"><span class="pricing-dollar">$</span>149<span class="pricing-period">/mo</span></div>
+          <div class="pricing-desc">For multi-location businesses and agencies.</div>
+          <ul class="pricing-features">
+            <li>✓ Unlimited SMS review requests</li>
+            <li>✓ Unlimited AI-generated review replies</li>
+            <li>✓ Unlimited GBP Optimizer audits</li>
+            <li>✓ Multi-location support (up to 5)</li>
+            <li>✓ Automated follow-up sequences</li>
+            <li>✓ White-label reports</li>
+            <li>✓ Dedicated account manager</li>
+            <li>✓ Phone support</li>
+          </ul>
+          <a href="/signup?plan=pro" class="pricing-cta">Start Free Trial →</a>
+          <p class="pricing-note">14-day free trial · No credit card required</p>
         </div>
 
       </div>
-      <p class="pricing-note">14-day free trial on all plans. No credit card required. Cancel anytime, no questions asked.</p>
+
+      <div class="pricing-guarantee">
+        <span class="guarantee-icon">🛡️</span>
+        <strong>30-Day Money-Back Guarantee.</strong> If ReviewPilot doesn't help your business get more Google reviews in the first 30 days, we'll refund every penny. No questions asked.
+      </div>
     </div>
   </section>
 
@@ -628,38 +565,6 @@
       });
     });
 
-    // ── Live preview ────────────────────────────────────────────────────────
-    const aiTemplates = [
-      (biz, trade, city) =>
-        `Thank you so much! The ${biz} team takes real pride in our ${trade} work here in ${city}, and it's feedback like yours that keeps us going. We look forward to helping you again!`,
-      (biz, trade, city) =>
-        `What a great review — thank you! Our ${trade} crew in ${city} works hard to do things right the first time, and knowing you noticed makes it all worthwhile. Don't hesitate to reach out anytime.`,
-      (biz, trade, city) =>
-        `This made our whole team smile — thank you! We're proud to be ${city}'s go-to for ${trade}, and it's reviews like yours that let us keep showing up for our neighbors every day. See you next time!`,
-      (biz, trade, city) =>
-        `Wow, we really appreciate that! At ${biz}, delivering great ${trade} service in ${city} is our standard — and knowing we hit the mark for you is the best feeling we get in this business.`,
-    ];
-
-    document.getElementById('preview-btn').addEventListener('click', () => {
-      const biz   = (document.getElementById('biz-name').value.trim()  || 'Your Business');
-      const trade = (document.getElementById('biz-trade').value        || 'AC Repair');
-      const city  = (document.getElementById('biz-city').value.trim()  || 'your city');
-
-      const sms = `Hi [Customer Name], thanks for choosing ${biz} for your ${trade}! Could you leave us a quick Google review? It only takes 30 seconds 🙏 → g.page/r/your-link`;
-      const ai  = aiTemplates[Math.floor(Math.random() * aiTemplates.length)](biz, trade, city);
-
-      document.getElementById('sms-preview-text').textContent = sms;
-      document.getElementById('ai-preview-text').textContent  = ai;
-      document.getElementById('tryit-result').classList.remove('hidden');
-      document.getElementById('tryit-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
-
-    // Allow pressing Enter in inputs to trigger preview
-    ['biz-name', 'biz-city'].forEach(id => {
-      document.getElementById(id).addEventListener('keydown', e => {
-        if (e.key === 'Enter') document.getElementById('preview-btn').click();
-      });
-    });
   </script>
 </body>
 </html>

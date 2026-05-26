@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ReviewPilot — Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -49,6 +50,15 @@
         <span class="stat-val" id="stat-replies">0</span>
         <span class="stat-lbl">AI Replies</span>
       </div>
+    </div>
+    <div class="header-user" style="display:flex;align-items:center;gap:12px;margin-left:16px;flex-shrink:0">
+      <div style="text-align:right;line-height:1.3">
+        <div style="font-size:13px;font-weight:600;color:#111827"><span id="user-name">…</span></div>
+        <div style="font-size:11px;color:#6b7280"><span id="user-biz">…</span></div>
+        <div style="font-size:11px;font-weight:600" id="user-plan"></div>
+      </div>
+      <a href="/api/stripe/portal" style="font-size:12px;color:#1d4ed8;white-space:nowrap;text-decoration:underline">Manage Plan</a>
+      <button id="logout-btn" style="font-size:12px;padding:6px 12px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:7px;cursor:pointer;font-weight:600;color:#374151">Log Out</button>
     </div>
   </header>
 
@@ -190,6 +200,37 @@
   <!-- Toast container -->
   <div id="toasts"></div>
 
+  <script>
+    // Load user info
+    fetch('/api/auth/me')
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(user => {
+        const nameEl = document.getElementById('user-name');
+        const bizEl  = document.getElementById('user-biz');
+        if (nameEl) nameEl.textContent = user.name || 'Welcome';
+        if (bizEl)  bizEl.textContent  = user.businessName || 'Your Business';
+        // Show trial/plan info
+        const planEl = document.getElementById('user-plan');
+        if (planEl) {
+          const trialEnd = new Date(user.trialEndsAt);
+          const daysLeft = Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000));
+          if (user.subscriptionStatus === 'trialing' || user.plan === 'trial') {
+            planEl.textContent = daysLeft > 0 ? `Free Trial — ${daysLeft} days left` : 'Trial Ended';
+            planEl.style.color = daysLeft <= 3 ? '#dc2626' : '#059669';
+          } else {
+            planEl.textContent = `${user.plan} Plan — Active`;
+            planEl.style.color = '#059669';
+          }
+        }
+      })
+      .catch(() => { window.location.href = '/login'; });
+
+    // Logout button
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    });
+  </script>
   <script src="app.js"></script>
 </body>
 </html>

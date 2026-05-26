@@ -1037,3 +1037,42 @@ img { display: block; max-width: 100%; }
   .tryit-divider { height: 1px; width: 100%; }
   .tryit-box { padding: 20px; }
 }
+
+/* ── New pricing card styles (3-tier) ────────────────────────────────────── */
+.pricing-dollar { font-size: 24px; font-weight: 700; color: var(--navy); align-self: flex-start; margin-top: 8px; }
+.pricing-period { font-size: 16px; color: var(--muted); font-weight: 500; }
+.pricing-desc   { font-size: 14px; color: var(--muted); margin-bottom: 20px; margin-top: 4px; line-height: 1.5; }
+.pricing-featured {
+  border-color: var(--navy);
+  box-shadow: 0 8px 40px rgba(13,33,55,.15);
+}
+.pricing-badge {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--navy);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 99px;
+  letter-spacing: .3px;
+  white-space: nowrap;
+}
+
+/* ── Pricing guarantee ───────────────────────────────────────────────────── */
+.pricing-guarantee {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--navy);
+  background: var(--amber-lt);
+  border: 1px solid var(--amber);
+  border-radius: var(--r);
+  padding: 16px 24px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.guarantee-icon { font-size: 20px; margin-right: 8px; }

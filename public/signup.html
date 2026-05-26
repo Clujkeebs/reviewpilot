@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Start Your Free 14-Day Trial — ReviewPilot</title>
   <meta name="description" content="Create your ReviewPilot account in 2 minutes. No credit card required. Start automating Google review requests and AI replies for your local business today." />
@@ -30,7 +31,7 @@
         </div>
 
         <h1 class="signup-h1">Start your free 14-day trial.</h1>
-        <p class="signup-sub">No credit card required. Set up in 10 minutes. Cancel anytime.</p>
+        <p class="signup-sub">14-day free trial · Money-back guarantee. Set up in 10 minutes.</p>
 
         <form id="signup-form" novalidate>
 
@@ -43,6 +44,11 @@
               <label class="sf-lbl" for="s-email">Email Address *</label>
               <input class="sf-inp" type="email" id="s-email" placeholder="sarah@austinhvac.com" required />
             </div>
+          </div>
+
+          <div class="sf-field">
+            <label class="sf-lbl" for="s-password">Password <span style="font-size:11px;color:#6b7280">(min. 8 characters)</span></label>
+            <input class="sf-inp" type="password" id="s-password" placeholder="Choose a secure password" required />
           </div>
 
           <div class="sf-field">
@@ -83,6 +89,10 @@
           </button>
 
           <p class="sf-terms">By signing up, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+
+          <p class="sf-terms" style="margin-top:12px;font-size:14px;color:#6b7280">
+            Already have an account? <a href="/login" style="color:#1d4ed8;font-weight:600">Log in</a>
+          </p>
         </form>
       </div>
     </div>
@@ -157,15 +167,17 @@
       e.preventDefault();
       errorBox.classList.add('hidden');
 
-      const name  = document.getElementById('s-name').value.trim();
-      const email = document.getElementById('s-email').value.trim();
-      const biz   = document.getElementById('s-biz').value.trim();
+      const name     = document.getElementById('s-name').value.trim();
+      const email    = document.getElementById('s-email').value.trim();
+      const password = document.getElementById('s-password').value;
+      const biz      = document.getElementById('s-biz').value.trim();
 
-      if (!name || !email || !biz) {
-        showError('Please fill in your name, email, and business name.');
-        if (!name)  shake(document.getElementById('s-name'));
-        if (!email) shake(document.getElementById('s-email'));
-        if (!biz)   shake(document.getElementById('s-biz'));
+      if (!name || !email || !password || !biz) {
+        showError('Please fill in your name, email, password, and business name.');
+        if (!name)     shake(document.getElementById('s-name'));
+        if (!email)    shake(document.getElementById('s-email'));
+        if (!password) shake(document.getElementById('s-password'));
+        if (!biz)      shake(document.getElementById('s-biz'));
         return;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -173,16 +185,22 @@
         shake(document.getElementById('s-email'));
         return;
       }
+      if (password.length < 8) {
+        showError('Password must be at least 8 characters.');
+        shake(document.getElementById('s-password'));
+        return;
+      }
 
       setBusy(true);
 
       try {
-        const res  = await fetch('/api/signup', {
+        const res  = await fetch('/api/auth/signup', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name,
             email,
+            password,
             businessName: biz,
             trade: document.getElementById('s-trade').value,
             phone: document.getElementById('s-phone').value.trim(),
@@ -192,7 +210,9 @@
 
         const data = await res.json();
 
-        if (res.ok && data.redirect) {
+        if (res.ok && data.stripeUrl) {
+          window.location.href = data.stripeUrl;
+        } else if (res.ok && data.redirect) {
           window.location.href = data.redirect;
         } else {
           showError(data.error || 'Something went wrong. Please try again.');

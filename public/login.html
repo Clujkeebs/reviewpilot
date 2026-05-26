@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log In — ReviewPilot</title>
+  <meta name="description" content="Log in to your ReviewPilot account to manage review requests, AI replies, and your Google Business Profile optimizer." />
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="signup.css" />
+</head>
+<body>
+
+  <div class="signup-page">
+
+    <!-- Left: form -->
+    <div class="signup-form-col">
+      <a href="/" class="signup-back">← Back to home</a>
+
+      <div class="signup-form-wrap">
+        <div class="signup-logo">
+          <span>📍</span>
+          <span class="signup-logo-text">
+            <span class="signup-logo-name">ReviewPilot</span>
+            <span class="signup-logo-by">by Clujkeebs</span>
+          </span>
+        </div>
+
+        <h1 class="signup-h1">Welcome back.</h1>
+        <p class="signup-sub">Log in to your account to continue.</p>
+
+        <form id="login-form" novalidate>
+
+          <div class="sf-field">
+            <label class="sf-lbl" for="l-email">Email Address</label>
+            <input class="sf-inp" type="email" id="l-email" placeholder="sarah@austinhvac.com" required />
+          </div>
+
+          <div class="sf-field">
+            <label class="sf-lbl" for="l-password">Password</label>
+            <input class="sf-inp" type="password" id="l-password" placeholder="Your password" required />
+          </div>
+
+          <div id="lf-error" class="sf-error hidden"></div>
+
+          <button class="sf-submit" type="submit" id="lf-btn">
+            <span id="lf-btn-txt">Log In →</span>
+            <span class="sf-spinner hidden" id="lf-spinner"></span>
+          </button>
+
+          <p class="sf-terms" style="margin-top:16px">
+            <a href="#" style="color:#6b7280;font-size:13px">Forgot password?</a>
+          </p>
+
+          <p class="sf-terms" style="margin-top:12px;font-size:14px;color:#6b7280">
+            Don't have an account? <a href="/signup" style="color:#1d4ed8;font-weight:600">Sign up free</a>
+          </p>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- Right: social proof panel -->
+    <div class="signup-proof-col">
+      <div class="proof-inner">
+
+        <div class="proof-headline">Everything you need to dominate Google Maps.</div>
+
+        <div class="proof-checks">
+          <div class="proof-check">✓ Automated SMS review requests after every job</div>
+          <div class="proof-check">✓ AI-generated Google replies, ready to post in one click</div>
+          <div class="proof-check">✓ GBP Optimizer — full profile audit &amp; action plan</div>
+          <div class="proof-check">✓ Live activity feed for your whole team</div>
+          <div class="proof-check">✓ Works for any local trade or service business</div>
+          <div class="proof-check">✓ 14-day free trial · 30-day money-back guarantee</div>
+        </div>
+
+        <div class="proof-quotes">
+          <div class="proof-quote">
+            <div class="proof-stars">★★★★★</div>
+            <p>"We went from 34 reviews to 127 in six weeks. ReviewPilot is the best thing I've added to my business this year."</p>
+            <div class="proof-attr">— Marcus D., Blue Ridge HVAC · Austin, TX</div>
+          </div>
+          <div class="proof-quote">
+            <div class="proof-stars">★★★★★</div>
+            <p>"Our Google Maps calls went up 34% in the first month. It was purely the reviews and AI replies."</p>
+            <div class="proof-attr">— Tony B., Apex Roofing · Phoenix, AZ</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const form     = document.getElementById('login-form');
+    const btn      = document.getElementById('lf-btn');
+    const btnTxt   = document.getElementById('lf-btn-txt');
+    const spinner  = document.getElementById('lf-spinner');
+    const errorBox = document.getElementById('lf-error');
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const email    = document.getElementById('l-email').value.trim();
+      const password = document.getElementById('l-password').value;
+      if (!email || !password) { showError('Please enter your email and password.'); return; }
+      setBusy(true);
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const res  = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, next: params.get('next') || '/dashboard' }),
+        });
+        const data = await res.json();
+        if (res.ok && data.redirect) { window.location.href = data.redirect; }
+        else { showError(data.error || 'Login failed. Please try again.'); }
+      } catch { showError('Network error. Please try again.'); }
+      finally { setBusy(false); }
+    });
+
+    function setBusy(busy) {
+      btn.disabled = busy;
+      btnTxt.textContent = busy ? 'Logging in…' : 'Log In →';
+      spinner.classList.toggle('hidden', !busy);
+    }
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.classList.remove('hidden');
+      errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // shake the form
+      form.animate([
+        { transform: 'translateX(0)' },
+        { transform: 'translateX(-5px)' },
+        { transform: 'translateX(5px)' },
+        { transform: 'translateX(-4px)' },
+        { transform: 'translateX(4px)' },
+        { transform: 'translateX(0)' },
+      ], { duration: 320, easing: 'ease' });
+    }
+  </script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- SEO -->
@@ -254,5 +255,28 @@
   </div><!-- /results -->
 
   <script src="ranking-calculator.js"></script>
+
+  <!-- Upgrade CTA shown after results -->
+  <div id="rc-upgrade-cta" style="display:none;margin:32px auto 48px;max-width:680px;background:linear-gradient(135deg,#0d2137 0%,#163352 100%);border-radius:16px;padding:36px 32px;text-align:center;color:#fff">
+    <div style="font-size:13px;font-weight:700;letter-spacing:.5px;color:#f59e0b;text-transform:uppercase;margin-bottom:10px">Ready to Fix These Issues?</div>
+    <h2 style="font-size:26px;font-weight:800;margin-bottom:12px;line-height:1.3">ReviewPilot Fixes Your Score Automatically</h2>
+    <p style="font-size:15px;color:rgba(255,255,255,.75);margin-bottom:24px;max-width:480px;margin-left:auto;margin-right:auto">Automated review requests after every job, AI-written Google replies, and a full GBP optimizer — everything you need to climb to #1 in your city.</p>
+    <a href="/signup" style="display:inline-block;padding:14px 32px;background:#f59e0b;color:#0d2137;font-size:16px;font-weight:800;border-radius:10px;text-decoration:none;transition:background .2s">Start Free 14-Day Trial →</a>
+    <p style="font-size:12px;color:rgba(255,255,255,.5);margin-top:14px">No credit card required · 30-day money-back guarantee</p>
+  </div>
+
+  <script>
+    // Show upgrade CTA once results are visible
+    const rcResults = document.getElementById('rc-results');
+    if (rcResults) {
+      const rcObs = new MutationObserver(() => {
+        if (!rcResults.classList.contains('hidden') && rcResults.style.display !== 'none') {
+          const cta = document.getElementById('rc-upgrade-cta');
+          if (cta) cta.style.display = 'block';
+        }
+      });
+      rcObs.observe(rcResults, { attributes: true, attributeFilter: ['class', 'style'] });
+    }
+  </script>
 </body>
 </html>
