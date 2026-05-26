@@ -48,7 +48,14 @@
 
           <div class="sf-field">
             <label class="sf-lbl" for="s-password">Password <span style="font-size:11px;color:#6b7280">(min. 8 characters)</span></label>
-            <input class="sf-inp" type="password" id="s-password" placeholder="Choose a secure password" required />
+            <div style="position:relative">
+              <input class="sf-inp" type="password" id="s-password" placeholder="Choose a secure password" required style="padding-right:42px" />
+              <button type="button" id="pw-toggle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#9ca3af;padding:4px;line-height:1" title="Show password">👁</button>
+            </div>
+            <div class="pw-strength" id="pw-strength">
+              <div class="pw-strength-bar" id="pw-bar"></div>
+            </div>
+            <div id="pw-hint" style="font-size:11px;color:#9ca3af;margin-top:2px;transition:color .2s"></div>
           </div>
 
           <div class="sf-field">
