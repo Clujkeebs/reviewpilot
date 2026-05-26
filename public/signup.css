@@ -67,11 +67,20 @@ body {
   font-weight: 800;
   color: var(--navy);
   margin-bottom: 28px;
+  text-decoration: none;
 }
 .signup-logo span:first-child { font-size: 22px; }
 .signup-logo-text { display: flex; flex-direction: column; line-height: 1; }
 .signup-logo-name { font-size: 20px; font-weight: 800; color: var(--navy); letter-spacing: -.3px; }
-.signup-logo-by   { font-size: 9px; font-weight: 500; color: var(--amber); letter-spacing: .05em; text-transform: uppercase; margin-top: 2px; }
+.signup-logo-by   { font-size: 9px; font-weight: 500; color: var(--amber); letter-spacing: .05em; text-transform: uppercase; margin-top: 2px; text-decoration: none; transition: color .15s; }
+a.signup-logo-by:hover { color: #fbbf24; }
+
+/* Password strength indicator */
+.pw-strength { height: 3px; border-radius: 3px; background: var(--border); margin-top: 6px; overflow: hidden; transition: opacity .2s; }
+.pw-strength-bar { height: 100%; width: 0; border-radius: 3px; transition: width .3s ease, background .3s ease; }
+.pw-strength-bar.weak { width: 33%; background: var(--red); }
+.pw-strength-bar.medium { width: 66%; background: var(--amber); }
+.pw-strength-bar.strong { width: 100%; background: var(--green); }
 
 .signup-h1 {
   font-size: 28px;

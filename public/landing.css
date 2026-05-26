@@ -78,7 +78,8 @@ img { display: block; max-width: 100%; }
 .nav-logo-mark { font-size: 20px; }
 .nav-logo-text { display: flex; flex-direction: column; line-height: 1; }
 .nav-logo-name { font-size: 17px; font-weight: 800; color: var(--navy); letter-spacing: -.3px; }
-.nav-logo-by   { font-size: 9px; font-weight: 500; color: var(--amber-dk); letter-spacing: .04em; text-transform: uppercase; margin-top: 1px; }
+.nav-logo-by   { font-size: 9px; font-weight: 500; color: var(--amber-dk); letter-spacing: .04em; text-transform: uppercase; margin-top: 1px; text-decoration: none; transition: color .15s; }
+a.nav-logo-by:hover { color: var(--amber); }
 
 /* Links */
 .nav-links {
@@ -671,9 +672,9 @@ img { display: block; max-width: 100%; }
 /* ── Pricing ─────────────────────────────────────────────────────────────── */
 .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-  max-width: 780px;
+  max-width: 960px;
   margin: 56px auto 0;
 }
 .pricing-card {
