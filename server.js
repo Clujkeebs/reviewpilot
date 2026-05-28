@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const bcrypt       = require('bcryptjs');
 const jwt          = require('jsonwebtoken');
 const db           = require('./db');
+const mailer       = require('./mailer');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -238,6 +239,7 @@ app.post('/api/auth/signup', async (req, res) => {
   });
 
   console.log(`[Signup] ${user.name} | ${user.email} | ${user.businessName}`);
+  mailer.sendWelcome(user.email, user.name).catch(() => {});
 
   const token = signToken(user);
   res.cookie('rp_token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: 'lax' });
@@ -347,6 +349,7 @@ app.post('/api/auth/forgot-password', (req, res) => {
     db.updateUser(user.id, { resetToken: token, resetExpires: String(Date.now() + 60 * 60 * 1000) });
     const url = `${process.env.APP_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
     console.log(`[Password Reset] ${user.email} → ${url}`);
+    mailer.sendPasswordReset(user.email, url).catch(() => {});
   }
   // Always respond success so we don't leak whether the email exists
   res.json({ success: true, message: 'If that email exists, a reset link has been sent.' });
