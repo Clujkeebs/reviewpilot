@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ReviewPilot — Dashboard</title>
+  <title>RepRocket — Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -27,7 +27,7 @@
     <div class="trial-expired-box">
       <div class="trial-expired-icon">🔒</div>
       <h2 class="trial-expired-title">Your trial has ended.</h2>
-      <p class="trial-expired-sub">Upgrade to continue using ReviewPilot — keep your customer list, SMS automation, AI replies, and GBP Optimizer.</p>
+      <p class="trial-expired-sub">Upgrade to continue using RepRocket — keep your customer list, SMS automation, AI replies, and GBP Optimizer.</p>
       <a href="/pricing" class="trial-expired-btn">Upgrade to continue →</a>
     </div>
   </div>
@@ -37,7 +37,7 @@
     <div class="welcome-box">
       <button class="welcome-x" id="welcome-x" title="Dismiss">×</button>
       <div class="welcome-icon">🎉</div>
-      <h2 class="welcome-title">Welcome to ReviewPilot<span id="welcome-name"></span>!</h2>
+      <h2 class="welcome-title">Welcome to RepRocket<span id="welcome-name"></span>!</h2>
       <p class="welcome-sub">Here's how to get your first review in 5 minutes:</p>
       <div class="welcome-steps">
         <div class="welcome-step">
@@ -70,16 +70,19 @@
   <header class="header">
     <div class="header-left">
       <div class="logo">
-        <a href="/" class="logo-home-link" aria-label="Home"><span class="logo-mark">📍</span></a>
+        <a href="/" class="logo-home-link" aria-label="Home"><span class="logo-mark">🚀</span></a>
         <span class="logo-text">
-          <a href="/" class="logo-name">ReviewPilot</a>
-          <a href="https://clujkeebs.com" target="_blank" class="logo-by">by Clujkeebs</a>
+          <a href="/" class="logo-name">RepRocket</a>
+          
         </span>
       </div>
       <div class="live-pill">
         <span class="live-dot"></span>
         LIVE
       </div>
+      <a href="/insights" class="gbp-nav-link" style="background:#f5f3ff;border-color:#c4b5fd;color:#6d28d9">
+        🤖 Growth Coach
+      </a>
       <a href="/optimize" class="gbp-nav-link">
         📍 GBP Optimizer
       </a>
@@ -104,6 +107,21 @@
         <span class="stat-val" id="stat-replies">0</span>
         <span class="stat-lbl">AI Replies</span>
       </div>
+      <div class="stat-sep"></div>
+      <div class="stat" id="stat-conv-wrap" title="Percentage of SMS requests that resulted in a review">
+        <span class="stat-val" id="stat-conv">–</span>
+        <span class="stat-lbl">Conversion</span>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat" id="stat-streak-wrap" title="Consecutive days you've sent at least one review request">
+        <span class="stat-val" id="stat-streak">–</span>
+        <span class="stat-lbl">Day Streak 🔥</span>
+      </div>
+      <div class="stat-sep"></div>
+      <a href="/insights" class="stat stat-coach-link" title="Open AI Growth Coach">
+        <span class="stat-val" style="color:#7c3aed">🤖</span>
+        <span class="stat-lbl" style="color:#7c3aed;font-weight:700">Growth Coach</span>
+      </a>
     </div>
     <div class="header-user" style="display:flex;align-items:center;gap:12px;margin-left:16px;flex-shrink:0">
       <div style="text-align:right;line-height:1.3">
@@ -127,7 +145,7 @@
       <div class="card">
         <div class="card-hd">
           <h2 class="card-title">Send Review Request</h2>
-          <p class="card-sub">Trigger an SMS to your customer via Twilio</p>
+          <p class="card-sub">Text your customer the moment you close a job — they review in 30 seconds</p>
         </div>
 
         <form id="sms-form" autocomplete="off" novalidate>
@@ -140,6 +158,7 @@
             <div class="field">
               <label class="lbl" for="phone">Phone Number</label>
               <input class="inp" type="tel" id="phone" placeholder="+15551234567" required />
+              <div id="phone-dup-warn" class="phone-dup-warn hidden"></div>
             </div>
             <div class="field">
               <label class="lbl" for="city">City</label>
@@ -150,40 +169,109 @@
           <div class="field">
             <label class="lbl" for="service">Service Provided</label>
             <input class="inp" type="text" id="service" placeholder="HVAC Repair, Plumbing, Roof Inspection…" required />
+            <div class="service-quickpicks" id="service-quickpicks">
+              <!-- filled by JS based on account trade -->
+            </div>
           </div>
 
           <div class="field">
             <label class="lbl" for="reviewLink">
               Google Review Link
-              <span class="lbl-hint">(optional — uses .env default)</span>
+              <span class="lbl-hint">(optional)</span>
+              <button type="button" id="test-link-btn" class="test-link-btn hidden" title="Open your review link to verify it works">🔗 Test</button>
             </label>
             <input class="inp" type="url" id="reviewLink" placeholder="https://g.page/r/…" />
           </div>
 
-          <button class="btn btn-primary" type="submit" id="sms-btn">
-            <span class="btn-ico">📱</span>
-            <span class="btn-txt" id="sms-btn-txt">Send Review Request via SMS</span>
-            <span class="spinner hidden" id="sms-spinner"></span>
-          </button>
+          <!-- Template picker -->
+          <div class="tpl-row">
+            <span class="tpl-lbl">Message Style:</span>
+            <div class="tpl-chips" id="tpl-chips">
+              <button type="button" class="tpl-chip active" data-tpl="standard">Standard</button>
+              <button type="button" class="tpl-chip" data-tpl="brief">Brief</button>
+              <button type="button" class="tpl-chip" data-tpl="personal">Personal</button>
+            </div>
+          </div>
+
+          <!-- SMS preview -->
+          <div class="sms-preview" id="sms-preview">
+            <div class="sms-preview-hd">
+              <span class="sms-preview-label">📱 Preview — what your customer will receive</span>
+              <span class="sms-preview-chars" id="sms-char-count"></span>
+            </div>
+            <div class="sms-preview-bubble" id="sms-preview-text">Fill in the form above to preview your message.</div>
+          </div>
+
+          <div class="sms-actions">
+            <button class="btn btn-primary" type="submit" id="sms-btn">
+              <span class="btn-ico">📱</span>
+              <span class="btn-txt" id="sms-btn-txt">Send via SMS</span>
+              <span class="spinner hidden" id="sms-spinner"></span>
+            </button>
+            <button type="button" class="btn btn-copy-msg" id="copy-msg-btn" title="Copy message to send yourself">
+              <span id="copy-msg-ico">⎘</span>
+              <span id="copy-msg-txt">Copy</span>
+            </button>
+          </div>
+          <p class="sms-actions-hint">No Twilio? <strong>Copy</strong> the message and text it yourself.</p>
+          <p class="sms-timing-hint">⚡ <strong>Pro tip:</strong> Send within 1 hour of closing the job — reviews convert 3× more often.</p>
         </form>
+
+        <!-- Batch mode toggle -->
+        <div class="batch-toggle-row">
+          <button type="button" id="batch-toggle-btn" class="batch-toggle-btn">
+            <span id="batch-toggle-ico">⚡</span> Send to Multiple Customers
+          </button>
+        </div>
+
+        <!-- Batch panel (hidden by default) -->
+        <div id="batch-panel" class="batch-panel hidden">
+          <div class="batch-panel-hd">
+            <span class="batch-panel-title">⚡ Batch Send — Today's Jobs</span>
+            <span class="batch-panel-sub">Service &amp; city are shared from the form above</span>
+          </div>
+          <div class="batch-rows" id="batch-rows">
+            <!-- rows injected by JS -->
+          </div>
+          <button type="button" id="batch-add-row" class="batch-add-row-btn">+ Add Another Customer</button>
+          <div class="batch-footer">
+            <button type="button" id="batch-send-btn" class="btn btn-primary batch-send-btn" disabled>
+              <span class="btn-ico">📱</span>
+              <span id="batch-send-txt">Send to 0 Customers</span>
+              <span class="spinner hidden" id="batch-spinner"></span>
+            </button>
+            <button type="button" id="batch-copy-btn" class="btn btn-copy-msg batch-copy-btn" title="Copy all messages">⎘ Copy All</button>
+          </div>
+          <div id="batch-result" class="batch-result hidden"></div>
+        </div>
       </div>
 
       <!-- Customers card -->
       <div class="card">
-        <div class="card-hd">
-          <h2 class="card-title">Your Customers</h2>
-          <p class="card-sub">Auto follow-ups send 3 days after the initial text</p>
+        <div class="card-hd" style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+          <div>
+            <h2 class="card-title">Your Customers</h2>
+            <p class="card-sub">Follow-ups auto-queue after 3 days</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+            <a href="/api/customers/export" id="export-csv-btn" class="export-csv-btn" title="Download your customer list as a spreadsheet" download>↓ CSV</a>
+            <button id="auto-followup-btn" class="auto-followup-btn hidden" title="Auto-send follow-ups to all overdue customers">
+              <span id="auto-fu-ico">⚡</span>
+              <span id="auto-fu-txt">Auto Follow-up</span>
+              <span class="spinner hidden" id="auto-fu-spinner"></span>
+            </button>
+          </div>
         </div>
         <div id="customers-list" class="customers-list">
           <div class="empty-state">No customers yet. Send your first review request above ↑</div>
         </div>
       </div>
 
-      <!-- Simulate Incoming Review card -->
+      <!-- AI Reply Generator card -->
       <div class="card">
         <div class="card-hd">
-          <h2 class="card-title">Simulate Incoming Review</h2>
-          <p class="card-sub">Test the AI auto-responder with a mock Google review</p>
+          <h2 class="card-title">🤖 AI Reply Generator</h2>
+          <p class="card-sub">Paste any real Google review — get a ready-to-post SEO reply in seconds</p>
         </div>
 
         <div class="field">
@@ -192,7 +280,7 @@
             class="inp inp-ta"
             id="reviewText"
             rows="4"
-            placeholder="Great service! The technician arrived on time and fixed our AC unit quickly. Very professional and thorough."
+            placeholder="Paste a real Google review here, or type a mock one to test the AI reply…"
           ></textarea>
         </div>
 
@@ -226,15 +314,48 @@
         </div>
 
         <button class="btn btn-purple" type="button" id="sim-btn">
-          <span class="btn-ico">🤖</span>
+          <span class="btn-ico">✨</span>
           <span class="btn-txt" id="sim-btn-txt">Generate AI Reply</span>
           <span class="spinner hidden" id="sim-spinner"></span>
         </button>
+        <div id="sim-reply-out" class="sim-reply-out hidden">
+          <div class="sim-reply-lbl">
+            <span>🤖 AI Reply — copy &amp; paste to Google</span>
+            <button class="copy-btn" id="sim-copy-btn" title="Copy to clipboard">⎘</button>
+          </div>
+          <div class="sim-reply-text" id="sim-reply-text"></div>
+        </div>
+      </div>
+
+      <!-- QR Code card -->
+      <div class="card" id="qr-card">
+        <div class="card-hd">
+          <h2 class="card-title">📱 Your Review QR Code</h2>
+          <p class="card-sub">Print on invoices, vans &amp; business cards</p>
+        </div>
+        <div id="qr-inner" style="text-align:center;padding:4px 0 8px">
+          <div id="qr-placeholder" style="font-size:13px;color:#94a3b8;padding:16px 0">
+            Enter a Google Review Link above to generate your QR code
+          </div>
+          <img id="qr-img" src="" alt="Review QR Code" style="display:none;width:160px;height:160px;border-radius:8px;margin:0 auto;border:1px solid #e2e8f0" />
+          <div id="qr-url-label" style="display:none;font-size:11px;color:#94a3b8;margin-top:8px;word-break:break-all;padding:0 4px"></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px" id="qr-actions" class="hidden">
+          <a id="qr-download" download="review-qr.png" class="btn btn-primary" style="flex:1;font-size:12px;padding:8px 0;text-decoration:none;text-align:center">
+            ⬇ Download
+          </a>
+          <button onclick="window.print()" class="btn btn-primary" style="flex:1;font-size:12px;padding:8px 0;background:#0d2137">
+            🖨 Print
+          </button>
+        </div>
+        <p style="font-size:11px;color:#94a3b8;margin-top:10px;text-align:center;line-height:1.5">
+          Customer scans → lands straight on your Google review page
+        </p>
       </div>
 
       <!-- GBP Optimizer promo -->
       <div class="card card-gbp-promo">
-        <div class="gbp-promo-icon">📍</div>
+        <div class="gbp-promo-icon">🚀</div>
         <h3 class="gbp-promo-title">Google Business Profile Optimizer</h3>
         <p class="gbp-promo-desc">Get an AI-powered audit of your entire GBP — optimized description, categories, photo plan, Q&amp;A, content calendar, and quick wins you can act on today.</p>
         <a href="/optimize" class="gbp-promo-btn">Run Full GBP Audit →</a>
@@ -244,6 +365,91 @@
 
     <!-- Right panel: Activity Feed -->
     <section class="panel-right">
+
+      <!-- Morning Brief widget -->
+      <div class="morning-brief" id="morning-brief">
+        <div class="mb-left">
+          <div class="mb-greeting" id="mb-greeting">Good morning 👋</div>
+          <div class="mb-sub" id="mb-sub">Loading your daily brief…</div>
+        </div>
+        <div class="mb-stats">
+          <div class="mb-stat">
+            <span class="mb-stat-val" id="mb-reviews-today">–</span>
+            <span class="mb-stat-lbl">reviews today</span>
+          </div>
+          <div class="mb-stat-sep"></div>
+          <div class="mb-stat">
+            <span class="mb-stat-val" id="mb-pending">–</span>
+            <span class="mb-stat-lbl">follow-ups due</span>
+          </div>
+          <div class="mb-stat-sep"></div>
+          <div class="mb-stat">
+            <span class="mb-stat-val" id="mb-streak">–</span>
+            <span class="mb-stat-lbl">day streak 🔥</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Setup checklist (shown for new users, dismissed once complete) -->
+      <div class="setup-checklist" id="setup-checklist">
+        <div class="setup-cl-hd">
+          <div>
+            <div class="setup-cl-title">🚀 Get your first review in 5 minutes</div>
+            <div class="setup-cl-sub">Complete these steps to start dominating Google Maps</div>
+          </div>
+          <button class="setup-cl-dismiss" id="setup-dismiss" title="Dismiss">×</button>
+        </div>
+        <div class="setup-cl-progress">
+          <div class="setup-cl-bar" id="setup-bar"></div>
+        </div>
+        <div class="setup-cl-steps">
+          <div class="setup-step" id="step-link">
+            <div class="setup-step-check" id="step-link-check">1</div>
+            <div class="setup-step-body">
+              <div class="setup-step-title">Set your Google review link</div>
+              <div class="setup-step-desc">Paste your link once — it pre-fills every SMS you send.</div>
+            </div>
+            <a href="/account" class="setup-step-cta">Go →</a>
+          </div>
+          <div class="setup-step" id="step-sms">
+            <div class="setup-step-check" id="step-sms-check">2</div>
+            <div class="setup-step-body">
+              <div class="setup-step-title">Send your first review request</div>
+              <div class="setup-step-desc">Fill in the form on the left and send a customer an SMS.</div>
+            </div>
+            <button class="setup-step-cta" onclick="document.getElementById('customerName').focus();document.getElementById('customerName').scrollIntoView({behavior:'smooth',block:'center'})">Go →</button>
+          </div>
+          <div class="setup-step" id="step-ai">
+            <div class="setup-step-check" id="step-ai-check">3</div>
+            <div class="setup-step-body">
+              <div class="setup-step-title">Try the AI reply generator</div>
+              <div class="setup-step-desc">Paste any review and watch the AI craft an SEO-tuned reply.</div>
+            </div>
+            <button class="setup-step-cta" onclick="document.getElementById('reviewText').focus();document.getElementById('reviewText').scrollIntoView({behavior:'smooth',block:'center'})">Try →</button>
+          </div>
+          <div class="setup-step" id="step-coach">
+            <div class="setup-step-check" id="step-coach-check">4</div>
+            <div class="setup-step-body">
+              <div class="setup-step-title">Check your AI Growth Coach</div>
+              <div class="setup-step-desc">Get your personalized weekly action plan to rank #1.</div>
+            </div>
+            <a href="/insights" class="setup-step-cta">View →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Follow-up Queue (shown when customers are overdue) -->
+      <div id="fu-queue" class="fu-queue hidden">
+        <div class="fu-queue-hd">
+          <span class="fu-queue-title">📋 Today's Follow-ups</span>
+          <span id="fu-queue-count" class="fu-queue-count"></span>
+        </div>
+        <div id="fu-queue-list" class="fu-queue-list"></div>
+        <div class="fu-queue-footer">
+          <button id="fu-queue-all-btn" class="fu-queue-all-btn">⚡ Send All Follow-ups</button>
+        </div>
+      </div>
+
       <div class="feed-hd">
         <h2 class="feed-title">Review Activity Feed</h2>
         <div class="feed-controls">
@@ -251,17 +457,113 @@
           <button class="btn-ghost" id="clear-btn">Clear</button>
         </div>
       </div>
+      <div class="feed-filters" id="feed-filters">
+        <button class="feed-filter-btn active" data-filter="all">All</button>
+        <button class="feed-filter-btn" data-filter="review_received">⭐ Reviews</button>
+        <button class="feed-filter-btn" data-filter="sms_sent">📱 SMS</button>
+      </div>
 
       <div class="feed-body" id="feed-body">
         <div class="empty" id="empty-state">
-          <div class="empty-ico">📬</div>
-          <p class="empty-title">No activity yet</p>
-          <p class="empty-desc">Send a review request or simulate an incoming review to see results here.</p>
+          <div class="empty-ico">🚀</div>
+          <p class="empty-title">Ready for your first review</p>
+          <p class="empty-desc">Send a review request on the left — your customer gets an SMS in seconds. Reviews and AI replies appear here instantly.</p>
+          <button class="empty-cta-btn" onclick="document.getElementById('customerName').focus();document.getElementById('customerName').scrollIntoView({behavior:'smooth',block:'center'})">
+            Start → Send first review request
+          </button>
+
+          <!-- Ghost preview of what a real feed looks like -->
+          <div class="empty-feed-preview" aria-hidden="true">
+            <div class="efp-label">Preview — what you'll see here</div>
+            <div class="efp-item efp-sms">
+              <span class="efp-ico">📱</span>
+              <div class="efp-body">
+                <div class="efp-row"><strong>Mike Johnson</strong> <span class="efp-badge efp-ok">✓ SMS Sent</span></div>
+                <div class="efp-sub">AC Repair · Austin · just now</div>
+              </div>
+            </div>
+            <div class="efp-item efp-review">
+              <span class="efp-ico">⭐</span>
+              <div class="efp-body">
+                <div class="efp-row"><strong>Sarah M. ★★★★★</strong> <span class="efp-badge efp-new">New Review</span></div>
+                <div class="efp-sub">"Fixed our AC the same day. Incredible!"</div>
+                <div class="efp-ai">🤖 AI Reply ready to copy</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
   </main>
+
+  <!-- ── Footer ── -->
+  <footer style="background:#081624;padding:18px 24px;text-align:center;margin-top:auto">
+    <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+      <span style="font-size:13px;font-weight:700;color:#fff">🚀 RepRocket</span>
+      
+      <span style="color:rgba(255,255,255,.15)">|</span>
+      <a href="/terms" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Terms</a>
+      <a href="/privacy" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Privacy</a>
+      <a href="mailto:hello@reprocket.app" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Contact</a>
+      <span style="color:rgba(255,255,255,.15)">|</span>
+      <span style="font-size:11px;color:rgba(255,255,255,.2)">&copy; 2026 RepRocket</span>
+    </div>
+  </footer>
+
+  <!-- Review Shield Modal -->
+  <div id="shield-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.75);z-index:300;align-items:center;justify-content:center;padding:24px">
+    <div style="background:#fff;border-radius:16px;padding:32px;max-width:520px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.4);position:relative;max-height:85vh;overflow-y:auto">
+      <button onclick="closeShield()" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;color:#9ca3af;cursor:pointer;line-height:1;padding:4px 8px">×</button>
+      <div style="font-size:36px;margin-bottom:8px">🚨</div>
+      <h2 style="font-size:20px;font-weight:800;color:#dc2626;margin-bottom:4px">Negative Review Alert</h2>
+      <p style="font-size:13px;color:#6b7280;margin-bottom:22px">Your AI recovery plan is ready. Act fast — responding within 24 hours improves your chance of a resolution.</p>
+
+      <div id="shield-loading" style="text-align:center;padding:20px 0">
+        <div style="width:32px;height:32px;border:3px solid rgba(79,70,229,.15);border-top-color:#4f46e5;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px"></div>
+        <p style="font-size:13px;color:#6b7280">Building your recovery plan…</p>
+      </div>
+
+      <div id="shield-content" style="display:none">
+        <!-- Public Reply -->
+        <div style="margin-bottom:18px">
+          <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#4f46e5;margin-bottom:8px">✏️ AI Public Reply (SEO-Optimised)</div>
+          <div id="shield-reply" style="background:#f5f3ff;border:1px solid #c4b5fd;border-radius:8px;padding:12px;font-size:13px;color:#3b1d8f;line-height:1.65;position:relative">
+            <button onclick="copyShieldReply()" style="position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;font-size:14px;color:#7c3aed" title="Copy">⎘</button>
+            <span id="shield-reply-text"></span>
+          </div>
+        </div>
+
+        <!-- Call Script -->
+        <div style="margin-bottom:18px">
+          <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#dc2626;margin-bottom:8px">📞 Phone Call Script</div>
+          <div id="shield-call" style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px;font-size:13px;color:#7f1d1d;line-height:1.65">
+            <span id="shield-call-text"></span>
+          </div>
+        </div>
+
+        <!-- Resolution Offer + Chance -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px">
+            <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#166534;margin-bottom:6px">🎁 Resolution Offer</div>
+            <div id="shield-offer" style="font-size:13px;color:#14532d;line-height:1.5"></div>
+          </div>
+          <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px">
+            <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#92400e;margin-bottom:6px">📊 Recovery Chance</div>
+            <div id="shield-chance" style="font-size:18px;font-weight:800;color:#78350f"></div>
+          </div>
+        </div>
+
+        <!-- Pro Tip -->
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px">
+          <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#64748b;margin-bottom:6px">💡 Pro Tip</div>
+          <div id="shield-tip" style="font-size:13px;color:#374151;line-height:1.55"></div>
+        </div>
+      </div>
+
+      <div id="shield-error" style="display:none;color:#dc2626;font-size:13px;padding:12px;background:#fef2f2;border-radius:8px;margin-top:12px"></div>
+    </div>
+  </div>
 
   <!-- Toast container -->
   <div id="toasts"></div>
@@ -317,6 +619,20 @@
           sessionStorage.setItem('rp_trial_banner_dismissed', '1');
         });
 
+        // Pre-fill saved Google review link
+        if (user.googleReviewLink) {
+          const rl = document.getElementById('reviewLink');
+          if (rl && !rl.value) {
+            rl.value = user.googleReviewLink;
+            // Trigger QR generation (app.js listens on input event)
+            rl.dispatchEvent(new Event('input'));
+          }
+        }
+
+        // Setup checklist
+        window._currentUser = user;
+        updateChecklist(user);
+
         // Welcome modal
         const params = new URLSearchParams(window.location.search);
         if (params.get('welcome') === '1') {
@@ -332,15 +648,62 @@
       .catch(() => { window.location.href = '/login'; });
 
     // ── Real stats from /api/stats ────────────────────────────────────────
+    function trendBadge(delta) {
+      if (!delta) return '';
+      const up = delta > 0;
+      return `<span style="font-size:10px;font-weight:700;color:${up?'#059669':'#dc2626'};display:block;line-height:1">${up?'↑':'↓'}${Math.abs(delta)} wk</span>`;
+    }
     async function loadStats() {
       try {
         const res = await fetch('/api/stats');
         if (!res.ok) return;
         const s = await res.json();
-        const a = document.getElementById('stat-sms');     if (a) a.textContent = s.smsSent;
-        const b = document.getElementById('stat-reviews'); if (b) b.textContent = s.reviews;
-        const c = document.getElementById('stat-rating');  if (c) c.textContent = s.avgRating == null ? '–' : s.avgRating;
-        const d = document.getElementById('stat-replies'); if (d) d.textContent = s.replies;
+        const a = document.getElementById('stat-sms');
+        const b = document.getElementById('stat-reviews');
+        const c = document.getElementById('stat-rating');
+        const d = document.getElementById('stat-replies');
+        const wSmsDelta = (s.smsThisWeek || 0) - (s.smsLastWeek || 0);
+        const wRevDelta = (s.reviewsThisWeek || 0) - (s.reviewsLastWeek || 0);
+        if (a) a.innerHTML = s.smsSent + trendBadge(wSmsDelta);
+        if (b) b.innerHTML = s.reviews + trendBadge(wRevDelta);
+        if (c) c.textContent = s.avgRating == null ? '–' : s.avgRating;
+        if (d) d.textContent = s.replies;
+        const convEl = document.getElementById('stat-conv');
+        if (convEl) {
+          if (s.conversionRate == null) {
+            convEl.textContent = '–';
+          } else {
+            const diff = s.conversionRate - 55;
+            const col  = diff >= 0 ? '#059669' : '#d97706';
+            const tag  = diff >= 0 ? `↑ vs avg` : `↓ vs avg`;
+            convEl.innerHTML = `${s.conversionRate}%<span style="font-size:10px;font-weight:700;color:${col};display:block;line-height:1">${tag}</span>`;
+          }
+        }
+        const streakEl = document.getElementById('stat-streak');
+        if (streakEl) {
+          const st = s.streak || 0;
+          streakEl.textContent = st > 0 ? st : '0';
+
+          // Streak milestone celebration (fires once per milestone)
+          const MILESTONES = [7, 14, 30, 60, 90, 365];
+          const doneKey = 'rp_streak_celebrated';
+          let celebrated = JSON.parse(localStorage.getItem(doneKey) || '[]');
+          const hit = MILESTONES.find(m => st >= m && !celebrated.includes(m));
+          if (hit) {
+            celebrated.push(hit);
+            localStorage.setItem(doneKey, JSON.stringify(celebrated));
+            const msgs = {
+              7:   ['🔥 7-Day Streak!',   'One whole week of daily requests — you\'re building real momentum. Businesses with consistent daily activity rank 2× faster.'],
+              14:  ['🏅 14-Day Streak!',  'Two solid weeks! Your Google profile is starting to notice. Keep the chain alive — you\'re ahead of 90% of local businesses.'],
+              30:  ['🏆 30-Day Streak!',  'A full month of consistent review activity. That\'s elite level — most businesses quit after week one. You\'re dominating.'],
+              60:  ['🚀 60-Day Streak!',  'Two months straight. Your local SEO foundation is rock solid. Competitors can\'t catch you at this pace.'],
+              90:  ['💎 90-Day Streak!',  'Three months of daily action. You\'re in the top 1% of local businesses on Google Maps. This is what #1 looks like.'],
+              365: ['🌟 365-Day Streak!', 'One full year. Absolutely legendary. You\'ve built an unstoppable review machine — your competitors don\'t stand a chance.'],
+            };
+            const [title, body] = msgs[hit] || [`${hit}-Day Streak!`, 'Outstanding consistency.'];
+            if (typeof toast === 'function') toast('ok', `${title} ${body}`, 8000);
+          }
+        }
       } catch {}
     }
     loadStats();
@@ -360,9 +723,54 @@
       if (!box) return;
       if (!list || list.length === 0) {
         box.innerHTML = '<div class="empty-state">No customers yet. Send your first review request above ↑</div>';
+        // Reset header count
+        const hdrCount = document.getElementById('customers-followup-count');
+        if (hdrCount) hdrCount.remove();
         return;
       }
-      box.innerHTML = list.map(c => {
+
+      const safe = s => String(s ?? '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+      const now = Date.now();
+      const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+
+      // Sort: needs-followup first, then by recency
+      const needsFollowup = c => {
+        if (c.status === 'reviewed' || c.status === 'completed') return false;
+        if (!c.lastSmsAt) return false;
+        return (now - new Date(c.lastSmsAt).getTime()) >= THREE_DAYS;
+      };
+
+      const sorted = [...list].sort((a, b) => {
+        const af = needsFollowup(a) ? 0 : 1;
+        const bf = needsFollowup(b) ? 0 : 1;
+        return af - bf;
+      });
+
+      const followupCount = sorted.filter(needsFollowup).length;
+
+      // Update card header count badge
+      const cardHd = box.closest('.card')?.querySelector('.card-hd');
+      let hdrCount = document.getElementById('customers-followup-count');
+      if (followupCount > 0) {
+        if (!hdrCount) {
+          hdrCount = document.createElement('span');
+          hdrCount.id = 'customers-followup-count';
+          hdrCount.className = 'customers-header-count';
+          cardHd?.appendChild(hdrCount);
+        }
+        hdrCount.textContent = `⚠ ${followupCount} need follow-up`;
+      } else if (hdrCount) {
+        hdrCount.remove();
+      }
+
+      // Show/hide auto follow-up button
+      const autoFuBtn = document.getElementById('auto-followup-btn');
+      if (autoFuBtn) {
+        autoFuBtn.classList.toggle('hidden', followupCount === 0);
+        document.getElementById('auto-fu-txt').textContent = `Auto Follow-up (${followupCount})`;
+      }
+
+      box.innerHTML = sorted.map(c => {
         const last4  = (c.phone || '').slice(-4);
         const status = c.status || 'pending';
         const cls    = {
@@ -371,6 +779,7 @@
           'followup_sent': 'badge-followup',
           'reviewed':      'badge-reviewed',
           'completed':     'badge-reviewed',
+          'declined':      'badge-declined',
         }[status] || 'badge-pending';
         const label = {
           'pending':       'Not sent',
@@ -378,20 +787,33 @@
           'followup_sent': 'Follow-up sent',
           'reviewed':      'Reviewed ⭐',
           'completed':     'Completed',
+          'declined':      'Declined 🚫',
         }[status] || status;
-        const safe = s => String(s ?? '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+        const isDeclined  = status === 'declined';
+        const dueFollowup = !isDeclined && needsFollowup(c);
+        const itemClass = dueFollowup ? 'customer-item cust-needs-followup' : 'customer-item';
+        const followupBadge = dueFollowup
+          ? `<span class="cust-followup-badge">⏰ Follow-up due</span>`
+          : '';
+        const daysSince = c.lastSmsAt
+          ? Math.floor((now - new Date(c.lastSmsAt).getTime()) / 86400000)
+          : null;
+        const subExtra = daysSince !== null ? ` · ${daysSince}d ago` : '';
         return `
-          <div class="customer-item" data-id="${safe(c.id)}">
+          <div class="${itemClass}" data-id="${safe(c.id)}">
             <div class="customer-top">
-              <div class="customer-name">${safe(c.name)}</div>
+              <div class="customer-name">${safe(c.name)}${followupBadge}</div>
               <span class="customer-badge ${cls}">${label}</span>
             </div>
-            <div class="customer-sub">···${safe(last4)} · ${safe(c.service || '')}${c.city ? ' · ' + safe(c.city) : ''}</div>
+            <div class="customer-sub">···${safe(last4)} · ${safe(c.service || '')}${c.city ? ' · ' + safe(c.city) : ''}${subExtra}</div>
             <div class="customer-actions">
-              <button data-act="followup" data-id="${safe(c.id)}" class="cust-btn">Send Follow-up</button>
-              <button data-act="reviewed" data-id="${safe(c.id)}" class="cust-btn cust-btn-ok">Mark Reviewed</button>
-              <button data-act="remove"   data-id="${safe(c.id)}" class="cust-btn cust-btn-x">Remove</button>
+              ${!isDeclined ? `<button data-act="followup" data-id="${safe(c.id)}" class="cust-btn${dueFollowup ? ' cust-btn-urgent' : ''}">Send Follow-up</button>` : ''}
+              ${!isDeclined && status !== 'reviewed' && status !== 'completed' ? `<button data-act="reviewed" data-id="${safe(c.id)}" class="cust-btn cust-btn-ok">✓ Reviewed</button>` : ''}
+              ${status === 'reviewed' || status === 'completed' ? `<span class="cust-reviewed-note">⭐ Review received</span>` : ''}
+              ${!isDeclined ? `<button data-act="declined" data-id="${safe(c.id)}" class="cust-btn cust-btn-declined">✕ Declined</button>` : ''}
+              <button data-act="remove" data-id="${safe(c.id)}" class="cust-btn cust-btn-x" title="Remove">🗑</button>
             </div>
+            <textarea class="cust-notes-input" data-notes-id="${safe(c.id)}" placeholder="Job notes… (e.g. 'fence + gate, paid cash')" rows="1">${safe(c.notes || '')}</textarea>
           </div>
         `;
       }).join('');
@@ -403,8 +825,15 @@
           const act = btn.dataset.act;
           btn.disabled = true;
           try {
-            if (act === 'followup') await fetch(`/api/customers/${id}/send-followup`, { method: 'POST' });
+            if (act === 'followup') {
+              await fetch(`/api/customers/${id}/send-followup`, { method: 'POST' });
+              if (typeof toast === 'function') toast('ok', '📱 Follow-up SMS sent!');
+            }
             if (act === 'reviewed') await fetch(`/api/customers/${id}/mark-reviewed`, { method: 'POST' });
+            if (act === 'declined') {
+              await fetch(`/api/customers/${id}/mark-declined`, { method: 'POST' });
+              if (typeof toast === 'function') toast('info', '🚫 Marked as declined — no more follow-ups');
+            }
             if (act === 'remove') {
               if (!confirm('Remove this customer?')) { btn.disabled = false; return; }
               await fetch(`/api/customers/${id}`, { method: 'DELETE' });
@@ -414,19 +843,373 @@
           await loadStats();
         });
       });
+
+      // Wire notes textareas — auto-save on blur, auto-resize on input
+      box.querySelectorAll('.cust-notes-input').forEach(ta => {
+        const autoResize = () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; };
+        ta.addEventListener('input', autoResize);
+        if (ta.value) autoResize();
+        ta.addEventListener('blur', async () => {
+          const id = ta.dataset.notesId;
+          await fetch(`/api/customers/${id}/notes`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notes: ta.value }),
+          }).catch(() => {});
+        });
+      });
+
+      // ── Follow-up Queue ──────────────────────────────────────────────────
+      updateFollowupQueue(list);
     }
+
+    function updateFollowupQueue(customers) {
+      const queue    = document.getElementById('fu-queue');
+      const queueList = document.getElementById('fu-queue-list');
+      const countEl  = document.getElementById('fu-queue-count');
+      if (!queue || !queueList) return;
+
+      const now = Date.now();
+      const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+      const overdue = customers.filter(c => {
+        if (c.status === 'reviewed' || c.status === 'completed' || c.status === 'declined') return false;
+        return c.lastSmsAt && (now - new Date(c.lastSmsAt).getTime()) >= THREE_DAYS;
+      }).slice(0, 5); // show max 5 in queue
+
+      if (overdue.length === 0) {
+        queue.classList.add('hidden');
+        return;
+      }
+
+      queue.classList.remove('hidden');
+      countEl.textContent = `${overdue.length} waiting`;
+
+      queueList.innerHTML = overdue.map(c => {
+        const daysAgo = Math.floor((now - new Date(c.lastSmsAt).getTime()) / 86400000);
+        return `
+          <div class="fu-queue-item" data-id="${safe(c.id)}">
+            <div class="fu-qi-info">
+              <span class="fu-qi-name">${safe(c.name)}</span>
+              <span class="fu-qi-meta">${safe(c.service || '')}${c.city ? ' · ' + safe(c.city) : ''} · ${daysAgo}d since request</span>
+            </div>
+            <button class="fu-qi-btn" data-id="${safe(c.id)}">Send Nudge →</button>
+          </div>`;
+      }).join('');
+
+      // Wire individual send buttons
+      queueList.querySelectorAll('.fu-qi-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          btn.disabled = true;
+          btn.textContent = 'Sending…';
+          try {
+            await fetch(`/api/customers/${id}/send-followup`, { method: 'POST' });
+            btn.closest('.fu-queue-item').style.opacity = '.4';
+            btn.textContent = '✓ Sent';
+            if (typeof toast === 'function') toast('ok', '📱 Follow-up sent!');
+            setTimeout(() => { loadCustomers(); loadStats(); }, 1200);
+          } catch {
+            btn.disabled = false;
+            btn.textContent = 'Send Nudge →';
+          }
+        });
+      });
+    }
+
+    // Wire "Send All" in follow-up queue
+    document.getElementById('fu-queue-all-btn')?.addEventListener('click', async () => {
+      const allBtns = document.querySelectorAll('.fu-qi-btn:not(:disabled)');
+      for (const btn of allBtns) btn.click();
+    });
+
     loadCustomers();
+
+    // ── Auto Follow-up (send all overdue in one click) ───────────────────
+    document.getElementById('auto-followup-btn')?.addEventListener('click', async () => {
+      const btn     = document.getElementById('auto-followup-btn');
+      const ico     = document.getElementById('auto-fu-ico');
+      const txt     = document.getElementById('auto-fu-txt');
+      const spinner = document.getElementById('auto-fu-spinner');
+      btn.disabled = true;
+      ico.classList.add('hidden');
+      spinner.classList.remove('hidden');
+      txt.textContent = 'Sending…';
+
+      try {
+        // Get all customers that need follow-up
+        const res  = await fetch('/api/customers');
+        const list = await res.json();
+        const now  = Date.now();
+        const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+        const overdue = list.filter(c => {
+          if (c.status === 'reviewed' || c.status === 'completed') return false;
+          return c.lastSmsAt && (now - new Date(c.lastSmsAt).getTime()) >= THREE_DAYS;
+        });
+
+        let sent = 0;
+        for (const c of overdue) {
+          try {
+            await fetch(`/api/customers/${c.id}/send-followup`, { method: 'POST' });
+            sent++;
+          } catch {}
+        }
+
+        if (typeof toast === 'function') {
+          toast('ok', `⚡ ${sent} follow-up${sent !== 1 ? 's' : ''} sent automatically!`);
+        }
+        await loadCustomers();
+        await loadStats();
+      } catch (err) {
+        if (typeof toast === 'function') toast('err', '⚠ Failed to send follow-ups');
+      } finally {
+        btn.disabled = false;
+        ico.classList.remove('hidden');
+        spinner.classList.add('hidden');
+      }
+    });
+
+    // ── Batch Send ───────────────────────────────────────────────────────
+    (function initBatchSend() {
+      const toggleBtn  = document.getElementById('batch-toggle-btn');
+      const batchPanel = document.getElementById('batch-panel');
+      const rowsWrap   = document.getElementById('batch-rows');
+      const addRowBtn  = document.getElementById('batch-add-row');
+      const sendBtn    = document.getElementById('batch-send-btn');
+      const sendTxt    = document.getElementById('batch-send-txt');
+      const spinner    = document.getElementById('batch-spinner');
+      const resultEl   = document.getElementById('batch-result');
+      const copyAllBtn = document.getElementById('batch-copy-btn');
+      if (!toggleBtn) return;
+
+      let rowCount = 0;
+
+      function addRow(name = '', phone = '') {
+        rowCount++;
+        const row = document.createElement('div');
+        row.className = 'batch-row';
+        row.dataset.row = rowCount;
+        row.innerHTML = `
+          <input class="inp batch-name" type="text" placeholder="Customer Name" value="${name}" />
+          <input class="inp batch-phone" type="tel" placeholder="+15551234567" value="${phone}" />
+          <button type="button" class="batch-row-remove" title="Remove">✕</button>
+        `;
+        row.querySelector('.batch-row-remove').addEventListener('click', () => {
+          row.remove();
+          updateSendBtn();
+        });
+        row.querySelectorAll('.inp').forEach(el => el.addEventListener('input', updateSendBtn));
+        rowsWrap.appendChild(row);
+        updateSendBtn();
+      }
+
+      function updateSendBtn() {
+        const rows = rowsWrap.querySelectorAll('.batch-row');
+        const filled = [...rows].filter(r => r.querySelector('.batch-name')?.value.trim() && r.querySelector('.batch-phone')?.value.trim());
+        sendBtn.disabled = filled.length === 0;
+        sendTxt.textContent = `Send to ${filled.length} Customer${filled.length !== 1 ? 's' : ''}`;
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        const isOpen = !batchPanel.classList.contains('hidden');
+        batchPanel.classList.toggle('hidden', isOpen);
+        toggleBtn.classList.toggle('active', !isOpen);
+        if (!isOpen && rowsWrap.children.length === 0) {
+          addRow(); addRow();
+        }
+      });
+
+      addRowBtn.addEventListener('click', () => addRow());
+
+      sendBtn.addEventListener('click', async () => {
+        const service    = document.getElementById('service')?.value.trim();
+        const city       = document.getElementById('city')?.value.trim() || '';
+        const reviewLink = document.getElementById('reviewLink')?.value.trim() || '';
+        if (!service) { alert('Fill in the Service field above first.'); return; }
+
+        const customers = [];
+        rowsWrap.querySelectorAll('.batch-row').forEach(r => {
+          const name  = r.querySelector('.batch-name')?.value.trim();
+          const phone = r.querySelector('.batch-phone')?.value.trim();
+          if (name && phone) customers.push({ name, phone });
+        });
+        if (customers.length === 0) return;
+
+        sendBtn.disabled = true;
+        spinner.classList.remove('hidden');
+        sendTxt.textContent = 'Sending…';
+        resultEl.className = 'batch-result hidden';
+
+        try {
+          const res = await fetch('/api/send-bulk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ customers, service, city, reviewLink, template: window.activeTpl || localStorage.getItem('rp_tpl') || 'standard' }),
+          });
+          const data = await res.json();
+          const sent   = data.sent || 0;
+          const total  = data.total || customers.length;
+          const failed = total - sent;
+          resultEl.className = 'batch-result ' + (failed === 0 ? 'ok' : 'err');
+          resultEl.innerHTML = failed === 0
+            ? `✅ All ${sent} messages sent! Check the feed →`
+            : `⚠ ${sent}/${total} sent. ${failed} failed (check Twilio credentials).`;
+          resultEl.classList.remove('hidden');
+          if (typeof loadCustomers === 'function') { setTimeout(loadCustomers, 600); setTimeout(loadStats, 800); }
+        } catch (err) {
+          resultEl.className = 'batch-result err';
+          resultEl.textContent = '⚠ Network error — check your connection.';
+          resultEl.classList.remove('hidden');
+        } finally {
+          spinner.classList.add('hidden');
+          updateSendBtn();
+        }
+      });
+
+      // Copy All — copies all pending messages to clipboard
+      copyAllBtn?.addEventListener('click', () => {
+        const service    = document.getElementById('service')?.value.trim() || '[service]';
+        const reviewLink = document.getElementById('reviewLink')?.value.trim() || 'https://g.page/r/your-review-link';
+        const rows = [...rowsWrap.querySelectorAll('.batch-row')];
+        const messages = rows
+          .map(r => {
+            const name  = r.querySelector('.batch-name')?.value.trim();
+            const phone = r.querySelector('.batch-phone')?.value.trim();
+            if (!name || !phone) return null;
+            return `${phone}: Hi ${name}, thanks for choosing us for your ${service}! Could you leave us a quick Google review? It only takes 30 seconds: ${reviewLink}`;
+          })
+          .filter(Boolean)
+          .join('\n\n');
+        if (!messages) return;
+        navigator.clipboard.writeText(messages).then(() => {
+          copyAllBtn.textContent = '✓ Copied';
+          setTimeout(() => { copyAllBtn.innerHTML = '⎘ Copy All'; }, 2200);
+        });
+      });
+    })();
 
     // Refresh customers list after the SMS form submits
     document.getElementById('sms-form')?.addEventListener('submit', () => {
       setTimeout(() => { loadCustomers(); loadStats(); }, 800);
     });
 
+    // ── Morning Brief ────────────────────────────────────────────────────
+    (function initMorningBrief() {
+      const hour = new Date().getHours();
+      const greet = hour < 12 ? 'Good morning 👋' : hour < 17 ? 'Good afternoon 👋' : 'Good evening 👋';
+      const greetEl = document.getElementById('mb-greeting');
+      if (greetEl) greetEl.textContent = greet;
+
+      // Pull stats and customers to build the brief
+      async function refreshBrief() {
+        try {
+          const [statsRes, custRes] = await Promise.all([
+            fetch('/api/stats'),
+            fetch('/api/customers'),
+          ]);
+          const stats = await statsRes.json();
+          const customers = custRes.ok ? await custRes.json() : [];
+
+          // Follow-ups due (sent 3+ days ago, not yet reviewed/declined)
+          const now = Date.now();
+          const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+          const overdueList = customers.filter(c => {
+            if (c.status === 'reviewed' || c.status === 'completed' || c.status === 'declined') return false;
+            return c.lastSmsAt && (now - new Date(c.lastSmsAt).getTime()) >= THREE_DAYS;
+          });
+          const dueFU = overdueList.length;
+
+          // Reviews today
+          const feedRes = await fetch('/api/feed');
+          const feed = feedRes.ok ? await feedRes.json() : [];
+          const today = new Date().toDateString();
+          const reviewsToday = feed.filter(i => i.type === 'review_received' && new Date(i.timestamp).toDateString() === today).length;
+
+          document.getElementById('mb-reviews-today').textContent = reviewsToday;
+          document.getElementById('mb-pending').textContent = dueFU;
+          document.getElementById('mb-streak').textContent = stats.streak || 0;
+
+          // Build sub message — use names if available
+          const subEl = document.getElementById('mb-sub');
+          if (subEl) {
+            // Format overdue names: "Mike J., Sarah L. + 2 more"
+            function fmtNames(list) {
+              const first2 = list.slice(0, 2).map(c => {
+                const parts = (c.name || '').trim().split(' ');
+                return parts.length > 1 ? `${parts[0]} ${parts[1][0]}.` : parts[0];
+              });
+              const rest = list.length - 2;
+              return rest > 0 ? `${first2.join(', ')} + ${rest} more` : first2.join(' & ');
+            }
+
+            if (dueFU > 0 && reviewsToday > 0)
+              subEl.textContent = `${reviewsToday} new review${reviewsToday > 1 ? 's' : ''} today · ${fmtNames(overdueList)} waiting for a nudge`;
+            else if (dueFU > 0)
+              subEl.textContent = `Follow-up ${fmtNames(overdueList)} — ${dueFU === 1 ? 'they haven\'t reviewed yet' : 'they haven\'t reviewed yet'}`;
+            else if (reviewsToday > 0)
+              subEl.textContent = `${reviewsToday} new review${reviewsToday > 1 ? 's' : ''} came in today — keep it up!`;
+            else if ((stats.streak || 0) >= 3)
+              subEl.textContent = `${stats.streak}-day streak — don't break the chain 🔥`;
+            else
+              subEl.textContent = 'Send your first review request to start climbing Google Maps';
+          }
+        } catch {}
+      }
+      refreshBrief();
+      setInterval(refreshBrief, 30000);
+    })();
+
     // ── Logout button ────────────────────────────────────────────────────
     document.getElementById('logout-btn')?.addEventListener('click', async () => {
       await fetch('/api/auth/logout', { method: 'POST' });
       window.location.href = '/';
     });
+
+    // ── Setup checklist ──────────────────────────────────────────────────
+    function updateChecklist(user) {
+      const cl = document.getElementById('setup-checklist');
+      if (!cl) return;
+      if (sessionStorage.getItem('rp_cl_dismissed') === '1') { cl.style.display = 'none'; return; }
+
+      const hasLink = !!(user && user.googleReviewLink);
+      // SMS sent and AI reply are tracked from feed — read from DOM after feed loads
+      const hasSms    = (parseInt(document.getElementById('stat-sms')?.textContent)   || 0) > 0;
+      const hasReview = (parseInt(document.getElementById('stat-reviews')?.textContent) || 0) > 0;
+
+      const steps = [
+        { id: 'step-link-check',  done: hasLink },
+        { id: 'step-sms-check',   done: hasSms },
+        { id: 'step-ai-check',    done: hasReview },
+        { id: 'step-coach-check', done: false },
+      ];
+
+      let done = 0;
+      steps.forEach(s => {
+        const el = document.getElementById(s.id);
+        if (!el) return;
+        if (s.done) {
+          el.textContent = '✓';
+          el.classList.add('step-done');
+          el.closest('.setup-step')?.classList.add('step-complete');
+          done++;
+        }
+      });
+
+      const pct = Math.round((done / steps.length) * 100);
+      const bar = document.getElementById('setup-bar');
+      if (bar) bar.style.width = pct + '%';
+
+      // Hide if all 3 main steps done (coach is always optional)
+      if (done >= 3) {
+        setTimeout(() => { cl.style.display = 'none'; }, 2000);
+      }
+    }
+
+    // Re-check checklist after stats load
+    const _origLoadStats = window.loadStats;
+    setInterval(() => {
+      const user = window._currentUser;
+      if (user) updateChecklist(user);
+    }, 5000);
   </script>
   <script src="app.js"></script>
 </body>

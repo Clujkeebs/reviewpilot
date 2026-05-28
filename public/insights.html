@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Growth Coach — RepRocket</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/insights.css" />
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="ig-header">
+  <div class="ig-header-left">
+    <a href="/dashboard" class="ig-back">← Dashboard</a>
+    <div class="ig-logo">
+      <span class="ig-logo-mark">🚀</span>
+      <div class="ig-logo-text">
+        <a href="/dashboard" class="ig-logo-name">RepRocket</a>
+        
+      </div>
+    </div>
+  </div>
+  <nav class="ig-nav">
+    <a href="/dashboard" class="ig-nav-link">Dashboard</a>
+    <a href="/insights"  class="ig-nav-link ig-nav-active">Growth Coach</a>
+    <a href="/optimize"  class="ig-nav-link">GBP Optimizer</a>
+    <a href="/account"   class="ig-nav-link">Settings</a>
+  </nav>
+  <div class="ig-header-right">
+    <span class="ig-coach-badge">🤖 AI-Powered</span>
+    <button id="refreshBtn" class="ig-refresh-btn">
+      <span id="refreshIcon">↺</span>
+      <span id="refreshTxt">Get Fresh Insights</span>
+    </button>
+    <button class="ig-burger" id="ig-burger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+<div class="ig-mobile-menu" id="ig-mobile-menu">
+  <a href="/dashboard" class="ig-mm-link">Dashboard</a>
+  <a href="/insights"  class="ig-mm-link ig-mm-active">Growth Coach</a>
+  <a href="/optimize"  class="ig-mm-link">GBP Optimizer</a>
+  <a href="/account"   class="ig-mm-link">Settings</a>
+</div>
+
+<!-- ── Hero ── -->
+<section class="ig-hero">
+  <div class="ig-hero-inner">
+    <div class="ig-hero-text">
+      <div class="ig-hero-kicker">YOUR PERSONAL AI GROWTH COACH</div>
+      <h1 class="ig-hero-h1">What's working. What's not.<br>What to do <em>this week</em>.</h1>
+      <p class="ig-hero-sub">RepRocket's AI analyses your review data, SMS activity, and ranking signals — then gives you a specific action plan to outrank every competitor in your city.</p>
+    </div>
+    <div id="scoreCard" class="ig-score-card ig-score-skeleton">
+      <div class="ig-score-ring">
+        <svg viewBox="0 0 120 120" class="ig-score-svg">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="10"/>
+          <circle id="scoreArc" cx="60" cy="60" r="52" fill="none" stroke="#f59e0b" stroke-width="10"
+                  stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"
+                  transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s ease"/>
+        </svg>
+        <div class="ig-score-inner">
+          <span id="scoreNum" class="ig-score-num">–</span>
+          <span class="ig-score-label-sm">/ 100</span>
+        </div>
+      </div>
+      <div class="ig-score-meta">
+        <div id="scoreLabel" class="ig-score-badge">Analysing…</div>
+        <div id="scoreProjection" class="ig-score-projection">Loading your data…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Main content ── -->
+<main class="ig-main">
+
+  <!-- Loading state -->
+  <div id="loadingState" class="ig-loading">
+    <div class="ig-loading-spinner"></div>
+    <p class="ig-loading-text">Your AI coach is analysing your business…</p>
+    <p class="ig-loading-sub">Reviewing your activity, comparing trends, building your plan.</p>
+  </div>
+
+  <!-- Error state -->
+  <div id="errorState" class="ig-error hidden">
+    <div class="ig-error-icon">⚠️</div>
+    <h3 class="ig-error-title">Couldn't load insights</h3>
+    <p id="errorMsg" class="ig-error-msg"></p>
+    <button onclick="loadInsights()" class="ig-retry-btn">Try Again</button>
+  </div>
+
+  <!-- Content -->
+  <div id="insightContent" class="hidden">
+
+    <!-- Week at a Glance -->
+    <section class="ig-section ig-week-glance" id="weekGlance">
+      <div class="ig-week-glance-label">THIS WEEK AT A GLANCE</div>
+      <div class="ig-week-stats">
+        <div class="ig-wk-stat">
+          <span class="ig-wk-val" id="wk-sms">–</span>
+          <span class="ig-wk-lbl">SMS sent</span>
+          <span class="ig-wk-delta" id="wk-sms-delta"></span>
+        </div>
+        <div class="ig-wk-sep"></div>
+        <div class="ig-wk-stat">
+          <span class="ig-wk-val" id="wk-reviews">–</span>
+          <span class="ig-wk-lbl">new reviews</span>
+          <span class="ig-wk-delta" id="wk-reviews-delta"></span>
+        </div>
+        <div class="ig-wk-sep"></div>
+        <div class="ig-wk-stat">
+          <span class="ig-wk-val" id="wk-conv">–</span>
+          <span class="ig-wk-lbl">conversion rate</span>
+          <span class="ig-wk-delta" id="wk-conv-delta"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Review Velocity Chart -->
+    <section class="ig-section ig-chart-section">
+      <div class="ig-chart-header">
+        <div>
+          <h2 class="ig-section-title" style="margin-bottom:4px">Review Velocity</h2>
+          <p class="ig-chart-sub">Reviews collected per week over the last 8 weeks</p>
+        </div>
+        <div class="ig-chart-legend">
+          <span class="ig-chart-legend-dot"></span>
+          <span>Reviews / week</span>
+        </div>
+      </div>
+      <div class="ig-chart-wrap">
+        <canvas id="velocityChart" class="ig-velocity-canvas"></canvas>
+        <div id="chartEmpty" class="ig-chart-empty hidden">
+          <span>📭</span> No review data yet — send your first review request to start tracking.
+        </div>
+      </div>
+    </section>
+
+    <!-- Weekly Mission -->
+    <div class="ig-mission-banner" id="missionBanner">
+      <div class="ig-mission-icon" id="missionIcon">🎯</div>
+      <div class="ig-mission-body">
+        <div class="ig-mission-label">THIS WEEK'S MISSION</div>
+        <div id="weeklyGoal" class="ig-mission-goal">—</div>
+      </div>
+      <button class="ig-mission-done-btn" id="missionDoneBtn" title="Mark this week's mission as complete">
+        <span id="missionDoneIcon">✓</span>
+        <span id="missionDoneTxt">Mark Complete</span>
+      </button>
+    </div>
+    <div class="ig-mission-done-state hidden" id="missionDoneState">
+      <span class="ig-mission-done-check">✅</span>
+      <div>
+        <strong>Mission complete!</strong>
+        <span id="missionStreakNote"></span>
+      </div>
+    </div>
+
+    <!-- Insights grid -->
+    <section class="ig-section">
+      <h2 class="ig-section-title">Your Personalised Insights</h2>
+      <div id="insightsGrid" class="ig-insights-grid">
+        <!-- Cards injected by JS -->
+      </div>
+    </section>
+
+    <!-- Ranking Tip -->
+    <section class="ig-section">
+      <div class="ig-ranking-tip" id="rankingTipBox">
+        <div class="ig-ranking-tip-header">
+          <span class="ig-ranking-tip-icon">📍</span>
+          <span class="ig-ranking-tip-label">THIS WEEK'S RANKING TIP</span>
+          <span class="ig-ranking-tip-badge">Google Maps SEO</span>
+        </div>
+        <p id="rankingTipText" class="ig-ranking-tip-text">—</p>
+        <a href="/optimize" class="ig-ranking-tip-cta">Run Full GBP Audit →</a>
+      </div>
+    </section>
+
+    <!-- Coach Message -->
+    <section class="ig-section">
+      <div class="ig-coach-msg" id="coachMsgBox">
+        <div class="ig-coach-avatar">🤖</div>
+        <div class="ig-coach-body">
+          <div class="ig-coach-from">A message from your AI coach</div>
+          <p id="coachMsgText" class="ig-coach-text">—</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Google Post Generator -->
+    <section class="ig-section" id="gpost-section">
+      <h2 class="ig-section-title">📝 Google Post Generator</h2>
+      <p class="ig-section-sub">Auto-generate 3 ready-to-post Google Business Profile updates — improves local ranking, takes 10 seconds.</p>
+
+      <div class="gpost-controls">
+        <input class="gpost-inp" id="gpost-trade" type="text" placeholder="Your trade (e.g. HVAC, Plumbing)" />
+        <input class="gpost-inp" id="gpost-city"  type="text" placeholder="Your city (e.g. Austin, TX)" />
+        <button class="gpost-generate-btn" id="gpost-btn">
+          <span id="gpost-ico">✨</span>
+          <span id="gpost-txt">Generate 3 Posts</span>
+          <span class="spinner hidden" id="gpost-spinner"></span>
+        </button>
+      </div>
+      <div id="gpost-output" class="gpost-output hidden"></div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="ig-section">
+      <h2 class="ig-section-title">Quick Actions</h2>
+      <div class="ig-quick-actions">
+        <a href="/dashboard" class="ig-quick-btn ig-quick-primary">
+          <span class="ig-quick-icon">📱</span>
+          <span class="ig-quick-label">Send Review Requests</span>
+          <span class="ig-quick-arrow">→</span>
+        </a>
+        <a href="/optimize" class="ig-quick-btn ig-quick-gold">
+          <span class="ig-quick-icon">📍</span>
+          <span class="ig-quick-label">Optimize My GBP Profile</span>
+          <span class="ig-quick-arrow">→</span>
+        </a>
+        <a href="/dashboard" class="ig-quick-btn ig-quick-purple">
+          <span class="ig-quick-icon">🤖</span>
+          <span class="ig-quick-label">Get AI Reply for a Review</span>
+          <span class="ig-quick-arrow">→</span>
+        </a>
+        <button onclick="loadInsights()" class="ig-quick-btn ig-quick-ghost">
+          <span class="ig-quick-icon">↺</span>
+          <span class="ig-quick-label">Refresh My Insights</span>
+          <span class="ig-quick-arrow">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Updated timestamp -->
+    <p id="updatedAt" class="ig-updated-at"></p>
+
+  </div>
+</main>
+
+<!-- ── Footer ── -->
+<footer style="background:#0d2137;margin-top:60px;padding:20px 24px;text-align:center;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap">
+  <span style="font-size:13px;font-weight:700;color:#fff">🚀 RepRocket</span>
+  <a href="/terms"   style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Terms</a>
+  <a href="/privacy" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Privacy</a>
+  <a href="mailto:hello@reprocket.app" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Contact</a>
+  <span style="font-size:11px;color:rgba(255,255,255,.2)">&copy; 2026 RepRocket</span>
+</footer>
+
+<script src="/insights.js"></script>
+</body>
+</html>
