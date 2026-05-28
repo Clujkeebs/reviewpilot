@@ -50,7 +50,7 @@ function requireSubscription(req, res, next) {
   const isTrialActive = trialEnd > new Date();
   const isSubscribed = user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing';
   if (isTrialActive || isSubscribed) return next();
-  return res.redirect('/pricing?expired=1');
+  return res.redirect('/upgrade?expired=1');
 }
 
 // ── Twilio SMS ────────────────────────────────────────────────────────────────
@@ -903,6 +903,7 @@ app.get('/',                    (_req, res) => res.sendFile(path.join(__dirname,
 app.get('/login',               (_req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
 app.get('/signup',              (_req, res) => res.sendFile(path.join(__dirname, 'public', 'signup.html')));
 app.get('/pricing',             (_req, res) => res.redirect('/#pricing'));
+app.get('/upgrade',             requireAuth, (_req, res) => res.sendFile(path.join(__dirname, 'public', 'upgrade.html')));
 app.get('/ranking-calculator',  (_req, res) => res.sendFile(path.join(__dirname, 'public', 'ranking-calculator.html')));
 app.get('/dashboard',           requireAuth, requireSubscription, (_req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 app.get('/optimize',            requireAuth, requireSubscription, (_req, res) => res.sendFile(path.join(__dirname, 'public', 'optimize.html')));

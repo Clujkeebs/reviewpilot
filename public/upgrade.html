@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choose Your Plan — Starpush</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f3f4f6; color: #111827; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+    /* ── Header ── */
+    .up-header { background: #081624; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .up-logo   { font-size: 17px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .up-back   { font-size: 13px; color: rgba(255,255,255,.55); text-decoration: none; transition: color .15s; }
+    .up-back:hover { color: #fff; }
+
+    /* ── Expired banner ── */
+    .expired-notice { background: #fef2f2; border-bottom: 1px solid #fecaca; padding: 14px 24px; text-align: center; font-size: 14px; color: #991b1b; font-weight: 500; display: none; }
+    .expired-notice.show { display: block; }
+
+    /* ── Main ── */
+    .up-wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; }
+    .up-h1   { font-size: 30px; font-weight: 800; color: #0f2340; letter-spacing: -.5px; text-align: center; margin-bottom: 8px; }
+    .up-sub  { text-align: center; color: #6b7280; font-size: 15px; margin-bottom: 40px; }
+
+    /* ── Plan cards ── */
+    .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 720px) { .plans-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; } }
+
+    .plan-card {
+      background: #fff;
+      border: 2px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 28px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .plan-card:hover { border-color: #a5b4fc; box-shadow: 0 8px 30px rgba(79,70,229,.1); }
+    .plan-card.featured { border-color: #4f46e5; box-shadow: 0 8px 30px rgba(79,70,229,.15); }
+
+    .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #4f46e5; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; letter-spacing: .04em; white-space: nowrap; }
+
+    .plan-name  { font-size: 18px; font-weight: 700; color: #0f2340; margin-bottom: 6px; }
+    .plan-price { display: flex; align-items: baseline; gap: 2px; margin-bottom: 6px; }
+    .plan-dollar { font-size: 18px; font-weight: 700; color: #4f46e5; }
+    .plan-num    { font-size: 40px; font-weight: 800; color: #4f46e5; line-height: 1; }
+    .plan-period { font-size: 14px; color: #9ca3af; }
+    .plan-desc   { font-size: 13px; color: #6b7280; margin-bottom: 20px; min-height: 36px; line-height: 1.5; }
+
+    .plan-features { list-style: none; flex: 1; margin-bottom: 24px; display: flex; flex-direction: column; gap: 7px; }
+    .plan-features li { font-size: 13px; color: #374151; display: flex; align-items: flex-start; gap: 7px; }
+    .plan-features li::before { content: '✓'; color: #059669; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+    .plan-btn {
+      display: block; width: 100%; padding: 14px; border-radius: 10px;
+      font-size: 15px; font-weight: 700; text-align: center; cursor: pointer;
+      border: none; transition: background .15s, opacity .15s;
+      text-decoration: none;
+    }
+    .plan-btn-default  { background: #f3f4f6; color: #0f2340; }
+    .plan-btn-default:hover { background: #e5e7eb; }
+    .plan-btn-featured { background: #4f46e5; color: #fff; }
+    .plan-btn-featured:hover { background: #4338ca; }
+    .plan-btn:disabled, .plan-btn[aria-busy="true"] { opacity: .6; cursor: not-allowed; }
+
+    .plan-note { font-size: 12px; color: #9ca3af; text-align: center; margin-top: 8px; }
+
+    /* ── Guarantee ── */
+    .guarantee { text-align: center; margin-top: 36px; font-size: 14px; color: #6b7280; }
+    .guarantee strong { color: #0f2340; }
+
+    /* ── Error ── */
+    .up-error { display: none; background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 10px; padding: 14px 18px; color: #991b1b; font-size: 14px; text-align: center; margin-top: 24px; }
+    .up-error.show { display: block; }
+  </style>
+</head>
+<body>
+
+  <header class="up-header">
+    <a href="/dashboard" class="up-back">← Back to Dashboard</a>
+    <a href="/" class="up-logo"><span>🚀</span> Starpush</a>
+    <span></span>
+  </header>
+
+  <div class="expired-notice" id="expiredNotice">
+    ⚠️ Your free trial has ended. Choose a plan below to keep your customer list, SMS automation, and AI replies.
+  </div>
+
+  <main class="up-wrap">
+    <h1 class="up-h1">Choose your plan</h1>
+    <p class="up-sub">No contracts. Cancel anytime. Every plan includes a 30-day money-back guarantee.</p>
+
+    <div class="plans-grid">
+
+      <!-- Starter -->
+      <div class="plan-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">
+          <span class="plan-dollar">$</span>
+          <span class="plan-num">49</span>
+          <span class="plan-period">/mo</span>
+        </div>
+        <div class="plan-desc">Perfect for owner-operators sending 1–3 jobs a day.</div>
+        <ul class="plan-features">
+          <li>150 SMS review requests/month</li>
+          <li>Unlimited AI review replies</li>
+          <li>3 message styles (Standard, Brief, Personal)</li>
+          <li>Batch Send (up to 10 at once)</li>
+          <li>Review Shield — negative review alerts</li>
+          <li>QR Code Generator</li>
+          <li>GBP Optimizer (3 audits/month)</li>
+          <li>Email support</li>
+        </ul>
+        <button class="plan-btn plan-btn-default" data-plan="starter">Choose Starter →</button>
+        <p class="plan-note">$49/month · cancel anytime</p>
+      </div>
+
+      <!-- Growth -->
+      <div class="plan-card featured">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Growth</div>
+        <div class="plan-price">
+          <span class="plan-dollar">$</span>
+          <span class="plan-num">99</span>
+          <span class="plan-period">/mo</span>
+        </div>
+        <div class="plan-desc">For growing teams who want automation on every job.</div>
+        <ul class="plan-features">
+          <li>600 SMS review requests/month</li>
+          <li>Unlimited AI review replies</li>
+          <li>Batch Send — unlimited customers at once</li>
+          <li>AI Google Post Generator</li>
+          <li>AI Growth Coach — weekly action plan</li>
+          <li>Review Shield + recovery scripts</li>
+          <li>Smart follow-up & auto-reminders</li>
+          <li>Unlimited GBP Optimizer audits</li>
+          <li>Priority email & chat support</li>
+        </ul>
+        <button class="plan-btn plan-btn-featured" data-plan="growth">Choose Growth →</button>
+        <p class="plan-note">$99/month · cancel anytime</p>
+      </div>
+
+      <!-- Pro -->
+      <div class="plan-card">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">
+          <span class="plan-dollar">$</span>
+          <span class="plan-num">149</span>
+          <span class="plan-period">/mo</span>
+        </div>
+        <div class="plan-desc">For multi-location businesses and agencies.</div>
+        <ul class="plan-features">
+          <li>Unlimited SMS review requests</li>
+          <li>Unlimited AI review replies</li>
+          <li>Batch Send — unlimited customers at once</li>
+          <li>AI Google Post Generator</li>
+          <li>AI Growth Coach — weekly action plan</li>
+          <li>Multi-location support (up to 5)</li>
+          <li>White-label reports</li>
+          <li>Dedicated account manager</li>
+          <li>Phone support</li>
+        </ul>
+        <button class="plan-btn plan-btn-default" data-plan="pro">Choose Pro →</button>
+        <p class="plan-note">$149/month · cancel anytime</p>
+      </div>
+
+    </div>
+
+    <div class="guarantee">
+      🛡️ <strong>30-Day Money-Back Guarantee.</strong> If Starpush doesn't get you more Google reviews in the first 30 days, we'll refund every penny — no questions asked.
+    </div>
+
+    <div class="up-error" id="upError"></div>
+  </main>
+
+  <script>
+    // Show expired banner if redirected from expired trial
+    if (new URLSearchParams(location.search).get('expired') === '1') {
+      document.getElementById('expiredNotice').classList.add('show');
+    }
+
+    // Wire plan buttons → Stripe checkout
+    document.querySelectorAll('.plan-btn[data-plan]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const plan = btn.dataset.plan;
+        const origText = btn.textContent;
+        btn.setAttribute('aria-busy', 'true');
+        btn.textContent = 'Redirecting to checkout…';
+
+        const errEl = document.getElementById('upError');
+        errEl.classList.remove('show');
+
+        try {
+          const res  = await fetch('/api/stripe/create-checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plan }),
+          });
+          const data = await res.json();
+
+          if (data.url) {
+            window.location.href = data.url;
+          } else if (data.error) {
+            throw new Error(data.error);
+          } else {
+            throw new Error('No checkout URL returned.');
+          }
+        } catch (err) {
+          btn.removeAttribute('aria-busy');
+          btn.textContent = origText;
+          errEl.textContent = err.message.includes('Stripe') || err.message.includes('configured')
+            ? 'Payments are not yet enabled on this account. Please contact support at hello@starpush.io.'
+            : `Something went wrong: ${err.message}`;
+          errEl.classList.add('show');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
