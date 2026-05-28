@@ -218,7 +218,7 @@ async function loadInsights() {
         const banner = document.createElement('div');
         banner.id = 'demo-banner';
         banner.style.cssText = 'background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:12px;font-size:13.5px;color:#78350f;font-weight:600;';
-        banner.innerHTML = '<span style="font-size:20px">👁️</span><span><strong>Preview Mode</strong> — Connect your Anthropic API key to unlock your real personalised insights.</span>';
+        banner.innerHTML = '<span style="font-size:20px">📊</span><span><strong>Sample Data</strong> — Send your first SMS review requests to unlock your real personalised insights.</span>';
         demo.insertBefore(banner, demo.firstChild);
       }
     } else {

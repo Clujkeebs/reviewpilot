@@ -1081,6 +1081,12 @@ a.logo-by:hover { color: #fbbf24; }
   .setup-step-desc { display: none; }
 }
 
+/* ── Narrow mobile: hide overflow nav links, keep logo + LIVE ────────────── */
+@media (max-width: 520px) {
+  .gbp-nav-link { display: none; }
+  .header-left  { gap: 8px; }
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    BATCH SEND
 ══════════════════════════════════════════════════════════════════════════ */
