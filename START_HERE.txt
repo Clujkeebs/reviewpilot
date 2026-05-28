@@ -1,12 +1,12 @@
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║                                                                                ║
-║                    🚀 REVIEWPILOT IS READY TO DEPLOY 🚀                        ║
+║                    🚀 STARPUSH IS READY TO DEPLOY 🚀                        ║
 ║                                                                                ║
 ║                        3 STEPS TO A LIVE URL (5 MINUTES)                       ║
 ║                                                                                ║
 ╚════════════════════════════════════════════════════════════════════════════════╝
 
-YOUR TASK: Get ReviewPilot live on the internet in 5 minutes.
+YOUR TASK: Get Starpush live on the internet in 5 minutes.
 
 STATUS: ✅ All code is ready. All tests pass. No code changes needed.
 
@@ -29,18 +29,18 @@ STEP 2: PUSH CODE TO GITHUB (1 minute)
 ────────────────────────────────────────────────────────────────────────────────
 
 A. Create repository at: https://github.com/new
-   - Repository name: reviewpilot
+   - Repository name: starpush
    - Public (not private)
    - Leave everything else default
    - Click "Create repository"
 
 B. Copy the HTTPS URL shown (looks like):
-   https://github.com/YOUR_USERNAME/reviewpilot.git
+   https://github.com/YOUR_USERNAME/starpush.git
 
 C. Run this in Terminal:
 
    cd "/Users/skelemer/Desktop/Files/Projects & Code/b2b seo"
-   git remote add origin https://github.com/YOUR_USERNAME/reviewpilot.git
+   git remote add origin https://github.com/YOUR_USERNAME/starpush.git
    git branch -M main
    git push -u origin main
 
@@ -57,9 +57,9 @@ STEP 3: DEPLOY TO RENDER (3 minutes)
 2. Click "New +" button (top right)
 3. Click "Web Service"
 4. Click "Deploy existing repository"
-5. Select your "reviewpilot" repository
+5. Select your "starpush" repository
 6. Fill in the form:
-   - Name: reviewpilot
+   - Name: starpush
    - Environment: Node
    - Build Command: npm install
    - Start Command: node server.js
@@ -75,7 +75,7 @@ STEP 3: DEPLOY TO RENDER (3 minutes)
 
 WHAT YOUR LIVE URL WILL LOOK LIKE:
 
-https://reviewpilot-abc123xyz.onrender.com
+https://starpush-abc123xyz.onrender.com
 
 👉 THIS IS YOUR DEPLOYED APP — SHARE IT ANYWHERE!
 
@@ -157,7 +157,7 @@ RIGHT NOW:
    Get your API key
 
 👉 https://github.com/new
-   Create reviewpilot repo
+   Create starpush repo
 
 👉 https://dashboard.render.com
    Deploy it

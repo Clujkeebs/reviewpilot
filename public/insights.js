@@ -1,4 +1,4 @@
-/* ── RepRocket AI Growth Coach ─────────────────────────────────────────────── */
+/* ── Starpush AI Growth Coach ─────────────────────────────────────────────── */
 
 /* ── Demo data shown when API key is not yet configured ─────────────────────── */
 const DEMO_INSIGHTS = {

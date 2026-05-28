@@ -1,4 +1,4 @@
-# ReviewPilot 📍
+# Starpush 📍
 
 A B2B local SEO & review automation platform for service businesses. Automate Google reviews, generate AI replies, and optimize your Google Business Profile.
 
@@ -53,11 +53,11 @@ PORT=3000
 ## 🌐 Deployment
 
 ### Option 1: Render (Recommended)
-1. Create GitHub repo: `reviewpilot`
+1. Create GitHub repo: `starpush`
 2. Push code to GitHub
 3. Go to https://dashboard.render.com
 4. Click "New Web Service"
-5. Connect your `reviewpilot` repo
+5. Connect your `starpush` repo
 6. Set environment variables
 7. Deploy!
 
@@ -69,7 +69,7 @@ railway up
 
 ### Option 3: Heroku
 ```bash
-heroku create reviewpilot
+heroku create starpush
 heroku config:set ANTHROPIC_API_KEY=sk-ant-...
 git push heroku main
 ```
@@ -136,5 +136,5 @@ MIT
 
 ## 🆘 Support
 
-Email: support@reviewpilot.local  
+Email: support@starpush.local  
 Docs: See `DEPLOY.md` for deployment help

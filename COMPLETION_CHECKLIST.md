@@ -1,4 +1,4 @@
-# ✅ ReviewPilot Deployment Completion Checklist
+# ✅ Starpush Deployment Completion Checklist
 
 ## Project Ready ✓
 
@@ -61,7 +61,7 @@
 
 2. **Create GitHub Repository** (1 min)
    - https://github.com/new
-   - Name: `reviewpilot`
+   - Name: `starpush`
    - Push code
 
 3. **Deploy to Render** (3 min)

@@ -6,20 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- SEO -->
-  <title>Free Google Business Profile Audit — Scan Your GBP & Get Your Score | ReviewPilot</title>
+  <title>Free Google Business Profile Audit — Scan Your GBP & Get Your Score | Starpush</title>
   <meta name="description" content="Paste your Google Business Profile link and get an instant AI-powered audit. See your score, find what's hurting your ranking, and get a step-by-step fix plan." />
-  <link rel="canonical" href="https://reviewpilot.app/ranking-calculator" />
+  <link rel="canonical" href="https://starpush.io/ranking-calculator" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://reviewpilot.app/ranking-calculator" />
-  <meta property="og:title" content="Free Google Business Profile Audit — Scan Your GBP | ReviewPilot" />
+  <meta property="og:url" content="https://starpush.io/ranking-calculator" />
+  <meta property="og:title" content="Free Google Business Profile Audit — Scan Your GBP | Starpush" />
   <meta property="og:description" content="Paste your Google Business Profile link and get an instant AI-powered audit. See your score, find what's hurting your ranking, and get a step-by-step fix plan." />
-  <meta property="og:image" content="https://reviewpilot.app/og-image.png" />
+  <meta property="og:image" content="https://starpush.io/og-image.png" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Free Google Business Profile Audit | ReviewPilot" />
+  <meta name="twitter:title" content="Free Google Business Profile Audit | Starpush" />
   <meta name="twitter:description" content="Paste your Google Maps link and get an instant AI-powered audit of your business profile." />
 
   <!-- Fonts -->
@@ -32,12 +32,12 @@
 
   <!-- ── Header ── -->
   <header class="rc-header">
-    <a href="/" class="rc-back">← ReviewPilot Home</a>
+    <a href="/" class="rc-back">← Starpush Home</a>
     <div class="rc-logo">
-      <span>📍</span>
+      <span>🚀</span>
       <span class="rc-logo-text">
-        <span class="rc-logo-name">ReviewPilot</span>
-        <a href="https://clujkeebs.com" target="_blank" class="rc-logo-by">by Clujkeebs</a>
+        <span class="rc-logo-name">Starpush</span>
+        
       </span>
     </div>
     <span class="rc-badge">Free Tool</span>
@@ -50,11 +50,31 @@
       <div class="rc-hero-copy">
         <div class="rc-kicker">Free AI-Powered GBP Audit</div>
         <h1 class="rc-h1">Scan Your Google Business Profile</h1>
-        <p class="rc-sub">Enter your business details and our AI will analyze your Google Business Profile against the ranking signals that actually matter — then tell you exactly what to fix.</p>
+        <p class="rc-sub">Paste your Google Business Profile link below and our AI will audit your listing against the ranking signals that actually matter — then tell you exactly what to fix to rank #1 in your city.</p>
       </div>
 
       <div class="rc-form-card">
         <form id="rc-form" novalidate>
+
+          <!-- GBP Link — the #1 most important field -->
+          <div class="rc-gbp-link-section">
+            <label class="rc-lbl rc-lbl-big" for="rc-gbp-url">
+              <span class="rc-lbl-icon">🚀</span> Your Google Business Profile Link *
+            </label>
+            <p class="rc-gbp-help">Paste the URL of your Google Business Profile. <button type="button" class="rc-help-toggle" id="gbp-help-toggle">How do I find this?</button></p>
+            <input class="rc-inp rc-inp-big" type="url" id="rc-gbp-url" name="gbpUrl"
+              placeholder="https://www.google.com/maps/place/Your+Business/..." required />
+            <div class="rc-gbp-howto" id="gbp-howto" style="display:none">
+              <div class="rc-howto-steps">
+                <div class="rc-howto-step"><span class="rc-howto-num">1</span> Search for your business name on <a href="https://www.google.com/maps" target="_blank" rel="noopener">Google Maps</a></div>
+                <div class="rc-howto-step"><span class="rc-howto-num">2</span> Click on your business listing</div>
+                <div class="rc-howto-step"><span class="rc-howto-num">3</span> Copy the URL from your browser's address bar</div>
+                <div class="rc-howto-step"><span class="rc-howto-num">4</span> Paste it above — it should look like <code>google.com/maps/place/...</code></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rc-form-divider"><span>Business Details</span></div>
 
           <div class="rc-form-grid">
 
@@ -128,7 +148,15 @@
             <span class="rc-spinner" id="rc-spinner"></span>
           </button>
 
-          <p class="rc-form-note">🔒 Free. No sign-up required. Takes about 15 seconds.</p>
+          <div class="rc-social-proof-row">
+            <div class="rc-social-avatars">
+              <span class="rc-avatar rc-av1">MD</span>
+              <span class="rc-avatar rc-av2">RT</span>
+              <span class="rc-avatar rc-av3">TB</span>
+              <span class="rc-avatar rc-av4">JM</span>
+            </div>
+            <p class="rc-form-note"><strong id="rc-audits-count">1,247</strong> businesses audited this month · Free · No sign-up · ~15 sec</p>
+          </div>
 
         </form>
       </div><!-- /form-card -->
@@ -264,17 +292,44 @@
 
     <!-- CTA -->
     <div class="cta-card">
-      <div class="cta-eyebrow">Unlock Your Full Report</div>
-      <h2 class="cta-h2">Get the Complete Action Plan + AI Automation</h2>
-      <p class="cta-desc">Sign up for ReviewPilot to unlock your full GBP optimization report — plus automated review requests, AI-written replies, and everything else you need to rank #1.</p>
+      <div class="cta-eyebrow">🔓 Unlock Your Full Report</div>
+      <h2 class="cta-h2" id="cta-headline">Fix every gap in your GBP and start outranking competitors this week.</h2>
+      <p class="cta-desc">Sign up free and get the complete action plan — plus the full Starpush platform to keep improving automatically.</p>
+
+      <div class="cta-features">
+        <div class="cta-feat"><span class="cta-feat-icon">📱</span><span>Automated SMS review requests after every job</span></div>
+        <div class="cta-feat"><span class="cta-feat-icon">🤖</span><span>AI Growth Coach — weekly personalised action plan</span></div>
+        <div class="cta-feat"><span class="cta-feat-icon">🚨</span><span>Review Shield — instant negative review alerts &amp; recovery plans</span></div>
+        <div class="cta-feat"><span class="cta-feat-icon">📲</span><span>QR Code Generator — get reviews on invoices &amp; business cards</span></div>
+        <div class="cta-feat"><span class="cta-feat-icon">📍</span><span>Full GBP Optimizer — complete copy-paste action plan</span></div>
+      </div>
+
       <a href="/signup" class="cta-btn" id="cta-signup-btn">Start Free 14-Day Trial →</a>
-      <p class="cta-proof">No credit card required · 14-day free trial · 30-day money-back guarantee</p>
+      <p class="cta-proof">No credit card · 14-day free trial · 30-day money-back guarantee</p>
     </div>
 
     <!-- Reset -->
     <button class="rc-reset-btn" id="rc-reset-btn">← Analyze Another Business</button>
 
   </div><!-- /results -->
+
+  <!-- ── Footer ── -->
+  <footer class="rc-footer">
+    <div class="rc-footer-inner">
+      <div class="rc-footer-brand">
+        <span>🚀</span> <strong>Starpush</strong> 
+      </div>
+      <div class="rc-footer-links">
+        <a href="/">Home</a>
+        <a href="/#features">Features</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/terms">Terms</a>
+        <a href="/privacy">Privacy</a>
+        <a href="mailto:hello@starpush.io">Contact</a>
+      </div>
+      <p class="rc-footer-copy">&copy; 2026 Starpush. All rights reserved.</p>
+    </div>
+  </footer>
 
   <script src="ranking-calculator.js"></script>
 </body>

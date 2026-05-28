@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RepRocket — Dashboard</title>
+  <title>Starpush — Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -27,7 +27,7 @@
     <div class="trial-expired-box">
       <div class="trial-expired-icon">🔒</div>
       <h2 class="trial-expired-title">Your trial has ended.</h2>
-      <p class="trial-expired-sub">Upgrade to continue using RepRocket — keep your customer list, SMS automation, AI replies, and GBP Optimizer.</p>
+      <p class="trial-expired-sub">Upgrade to continue using Starpush — keep your customer list, SMS automation, AI replies, and GBP Optimizer.</p>
       <a href="/pricing" class="trial-expired-btn">Upgrade to continue →</a>
     </div>
   </div>
@@ -37,7 +37,7 @@
     <div class="welcome-box">
       <button class="welcome-x" id="welcome-x" title="Dismiss">×</button>
       <div class="welcome-icon">🎉</div>
-      <h2 class="welcome-title">Welcome to RepRocket<span id="welcome-name"></span>!</h2>
+      <h2 class="welcome-title">Welcome to Starpush<span id="welcome-name"></span>!</h2>
       <p class="welcome-sub">Here's how to get your first review in 5 minutes:</p>
       <div class="welcome-steps">
         <div class="welcome-step">
@@ -51,7 +51,7 @@
           <div class="welcome-step-num">2</div>
           <div class="welcome-step-body">
             <div class="welcome-step-title">🔗 Customize your Google review link</div>
-            <div class="welcome-step-desc">Grab your link from your Google Business Profile and drop it in the form (or set it as the default in env).</div>
+            <div class="welcome-step-desc">Grab your link from your Google Business Profile and save it in Account Settings — it'll pre-fill every SMS you send.</div>
           </div>
         </div>
         <div class="welcome-step">
@@ -72,7 +72,7 @@
       <div class="logo">
         <a href="/" class="logo-home-link" aria-label="Home"><span class="logo-mark">🚀</span></a>
         <span class="logo-text">
-          <a href="/" class="logo-name">RepRocket</a>
+          <a href="/" class="logo-name">Starpush</a>
           
         </span>
       </div>
@@ -213,7 +213,6 @@
               <span id="copy-msg-txt">Copy</span>
             </button>
           </div>
-          <p class="sms-actions-hint">No Twilio? <strong>Copy</strong> the message and text it yourself.</p>
           <p class="sms-timing-hint">⚡ <strong>Pro tip:</strong> Send within 1 hour of closing the job — reviews convert 3× more often.</p>
         </form>
 
@@ -500,14 +499,14 @@
   <!-- ── Footer ── -->
   <footer style="background:#081624;padding:18px 24px;text-align:center;margin-top:auto">
     <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
-      <span style="font-size:13px;font-weight:700;color:#fff">🚀 RepRocket</span>
+      <span style="font-size:13px;font-weight:700;color:#fff">🚀 Starpush</span>
       
       <span style="color:rgba(255,255,255,.15)">|</span>
       <a href="/terms" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Terms</a>
       <a href="/privacy" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Privacy</a>
-      <a href="mailto:hello@reprocket.app" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Contact</a>
+      <a href="mailto:hello@starpush.io" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Contact</a>
       <span style="color:rgba(255,255,255,.15)">|</span>
-      <span style="font-size:11px;color:rgba(255,255,255,.2)">&copy; 2026 RepRocket</span>
+      <span style="font-size:11px;color:rgba(255,255,255,.2)">&copy; 2026 Starpush</span>
     </div>
   </footer>
 
@@ -1052,7 +1051,7 @@
           resultEl.className = 'batch-result ' + (failed === 0 ? 'ok' : 'err');
           resultEl.innerHTML = failed === 0
             ? `✅ All ${sent} messages sent! Check the feed →`
-            : `⚠ ${sent}/${total} sent. ${failed} failed (check Twilio credentials).`;
+            : `⚠ ${sent}/${total} sent. ${failed} failed — please try again or contact support.`;
           resultEl.classList.remove('hidden');
           if (typeof loadCustomers === 'function') { setTimeout(loadCustomers, 600); setTimeout(loadStats, 800); }
         } catch (err) {

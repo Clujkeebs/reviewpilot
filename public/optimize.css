@@ -727,6 +727,36 @@ a.o-logo-by:hover { color: #fbbf24; }
 }
 .o-download-btn:hover { background: var(--navy-lt); }
 
+/* ── Output preview chips ────────────────────────────────────────────────── */
+.o-output-preview {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1.5px solid rgba(255,255,255,.1);
+}
+.o-output-preview-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 10px;
+}
+.o-output-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.o-chip {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,.75);
+  white-space: nowrap;
+}
+
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .res-row-top  { grid-template-columns: 1fr; }

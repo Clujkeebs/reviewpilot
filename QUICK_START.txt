@@ -1,5 +1,5 @@
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║                 REVIEWPILOT QUICK START TO LIVE DEPLOYMENT                  ║
+║                 STARPUSH QUICK START TO LIVE DEPLOYMENT                  ║
 ║                                                                              ║
 ║  Everything is ready. Follow these 3 steps to get your live URL in 5 min.   ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
@@ -18,7 +18,7 @@ STEP 2: Create GitHub Repository (1 minute)
 ─────────────────────────────────────────────
 
 Go to: https://github.com/new
-1. Repository name: reviewpilot
+1. Repository name: starpush
 2. Description: "B2B local SEO & review automation platform"
 3. Public
 4. Click "Create repository"
@@ -26,7 +26,7 @@ Go to: https://github.com/new
 Then copy the HTTPS URL and run:
 
   cd "/Users/skelemer/Desktop/Files/Projects & Code/b2b seo"
-  git remote add origin https://github.com/YOUR_USERNAME/reviewpilot.git
+  git remote add origin https://github.com/YOUR_USERNAME/starpush.git
   git branch -M main
   git push -u origin main
 
@@ -37,9 +37,9 @@ Go to: https://dashboard.render.com
 1. Click "New +" button
 2. Select "Web Service"
 3. Select "Deploy existing repository"
-4. Choose your "reviewpilot" repo
+4. Choose your "starpush" repo
 5. Fill in:
-   - Name: reviewpilot
+   - Name: starpush
    - Environment: Node
    - Build Command: npm install
    - Start Command: node server.js
@@ -73,7 +73,7 @@ NEED HELP?
 
 ────────────────────────────────────────────────────────────────────────────────
 
-Your deployment will be LIVE at: https://reviewpilot-XXXXXXX.onrender.com
+Your deployment will be LIVE at: https://starpush-XXXXXXX.onrender.com
 
 (Render generates a random subdomain. You can set a custom domain later.)
 

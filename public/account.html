@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Account & Settings — ReviewPilot</title>
+  <title>Account & Settings — Starpush</title>
   <meta name="robots" content="noindex" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,10 +18,10 @@
   <header class="header">
     <div class="header-left">
       <div class="logo">
-        <a href="/dashboard" class="logo-home-link" aria-label="Dashboard"><span class="logo-mark">📍</span></a>
+        <a href="/dashboard" class="logo-home-link" aria-label="Dashboard"><span class="logo-mark">🚀</span></a>
         <span class="logo-text">
-          <a href="/dashboard" class="logo-name">ReviewPilot</a>
-          <a href="https://clujkeebs.com" target="_blank" class="logo-by">by Clujkeebs</a>
+          <a href="/dashboard" class="logo-name">Starpush</a>
+          
         </span>
       </div>
       <a href="/dashboard" class="gbp-nav-link">← Back to Dashboard</a>
@@ -75,6 +75,15 @@
             <input class="acct-inp" type="tel" id="p-phone" />
           </div>
 
+          <div class="acct-field">
+            <label class="acct-lbl" for="p-review-link">
+              Default Google Review Link
+              <span class="acct-opt">— auto-fills every review request</span>
+            </label>
+            <input class="acct-inp" type="url" id="p-review-link" placeholder="https://g.page/r/your-review-link" />
+            <p class="acct-field-hint">Grab this from Google Business Profile → "Ask for reviews". Set it once and it pre-fills on every SMS you send.</p>
+          </div>
+
           <button class="acct-btn acct-btn-primary" type="submit" id="profile-save">Save Changes</button>
           <span class="acct-msg" id="profile-msg"></span>
         </form>
@@ -121,15 +130,14 @@
         </form>
       </section>
 
-      <!-- ── Twilio Connection ── -->
+      <!-- ── SMS Service ── -->
       <section class="acct-card">
-        <h2 class="acct-card-title">Twilio Connection</h2>
-        <p class="acct-card-sub">Twilio is used to send SMS review requests to your customers.</p>
+        <h2 class="acct-card-title">SMS Service</h2>
+        <p class="acct-card-sub">Review request messages are sent on your behalf — no setup required.</p>
         <div class="acct-twilio">
-          <span class="acct-pill" id="twilio-pill">Checking…</span>
-          <span class="acct-twilio-note" id="twilio-note"></span>
+          <span class="acct-pill pill-ok">✓ Connected</span>
+          <span class="acct-twilio-note">SMS delivery is fully managed by Starpush. Need to change your sender number? <a href="mailto:hello@starpush.io" style="color:inherit;text-decoration:underline">Contact support</a>.</span>
         </div>
-        <p class="acct-twilio-note">Twilio credentials are managed server-side via environment variables for now. Reach out to support to swap your number.</p>
       </section>
 
       <!-- ── Danger Zone ── -->
@@ -143,6 +151,20 @@
     </div>
   </main>
 
+  <!-- ── Footer ── -->
+  <footer style="background:#081624;padding:18px 24px;text-align:center;margin-top:auto">
+    <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+      <span style="font-size:13px;font-weight:700;color:#fff">🚀 Starpush</span>
+      
+      <span style="color:rgba(255,255,255,.15)">|</span>
+      <a href="/terms" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Terms</a>
+      <a href="/privacy" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Privacy</a>
+      <a href="mailto:hello@starpush.io" style="font-size:12px;color:rgba(255,255,255,.45);text-decoration:none">Contact</a>
+      <span style="color:rgba(255,255,255,.15)">|</span>
+      <span style="font-size:11px;color:rgba(255,255,255,.2)">&copy; 2026 Starpush</span>
+    </div>
+  </footer>
+
   <script>
     // Load user data
     let currentUser = null;
@@ -155,11 +177,12 @@
       document.getElementById('user-name').textContent = u.name || '';
       document.getElementById('user-biz').textContent  = u.businessName || '';
 
-      document.getElementById('p-name').value  = u.name || '';
-      document.getElementById('p-email').value = u.email || '';
-      document.getElementById('p-biz').value   = u.businessName || '';
-      document.getElementById('p-trade').value = u.trade || '';
-      document.getElementById('p-phone').value = u.phone || '';
+      document.getElementById('p-name').value        = u.name || '';
+      document.getElementById('p-email').value       = u.email || '';
+      document.getElementById('p-biz').value         = u.businessName || '';
+      document.getElementById('p-trade').value       = u.trade || '';
+      document.getElementById('p-phone').value       = u.phone || '';
+      document.getElementById('p-review-link').value = u.googleReviewLink || '';
 
       // Subscription
       const planEl   = document.getElementById('sub-plan');
@@ -180,7 +203,7 @@
         statusEl.style.color = daysLeft <= 3 ? '#dc2626' : '#059669';
       } else {
         planEl.textContent   = 'Trial Expired';
-        statusEl.textContent = 'Upgrade to continue using ReviewPilot.';
+        statusEl.textContent = 'Upgrade to continue using Starpush.';
         statusEl.style.color = '#dc2626';
       }
 
@@ -206,16 +229,6 @@
     }
     loadMe();
 
-    // Twilio status (best effort — check env exposure via /api/twilio-status if added; otherwise just static)
-    (async () => {
-      try {
-        // We can infer from /api/auth/me — for now, server-side env not exposed, so just say "Server-managed"
-        document.getElementById('twilio-pill').textContent  = 'Server-managed';
-        document.getElementById('twilio-pill').classList.add('pill-info');
-        document.getElementById('twilio-note').textContent  = 'Configured via TWILIO_* env vars.';
-      } catch {}
-    })();
-
     // Save profile
     document.getElementById('profile-form').addEventListener('submit', async e => {
       e.preventDefault();
@@ -228,10 +241,11 @@
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name:         document.getElementById('p-name').value.trim(),
-            businessName: document.getElementById('p-biz').value.trim(),
-            trade:        document.getElementById('p-trade').value.trim(),
-            phone:        document.getElementById('p-phone').value.trim(),
+            name:              document.getElementById('p-name').value.trim(),
+            businessName:      document.getElementById('p-biz').value.trim(),
+            trade:             document.getElementById('p-trade').value.trim(),
+            phone:             document.getElementById('p-phone').value.trim(),
+            googleReviewLink:  document.getElementById('p-review-link').value.trim(),
           }),
         });
         const data = await res.json();

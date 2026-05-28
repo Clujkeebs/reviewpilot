@@ -4,4 +4,4 @@ Disallow: /dashboard
 Disallow: /optimize
 Disallow: /account
 Disallow: /api/
-Sitemap: https://reviewpilot.app/sitemap.xml
+Sitemap: https://starpush.io/sitemap.xml

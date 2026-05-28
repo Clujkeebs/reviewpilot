@@ -168,6 +168,19 @@ function renderResults(analysis, bizName, city, trade) {
 
   const ctaBtn = document.getElementById('cta-signup-btn');
   if (ctaBtn) ctaBtn.href = signupUrl;
+
+  // Dynamic CTA headline based on score
+  const ctaHeadline = document.getElementById('cta-headline');
+  if (ctaHeadline) {
+    const score = parseInt(document.getElementById('score-ring-num')?.textContent || '0', 10);
+    if (score >= 75) {
+      ctaHeadline.textContent = `You're already strong at ${score}/100 — now automate it so you stay #1.`;
+    } else if (score >= 50) {
+      ctaHeadline.textContent = `Your score is ${score}/100. Close the gap and outrank every competitor in your city.`;
+    } else {
+      ctaHeadline.textContent = `Your score is ${score}/100. Fix these gaps and you could double your Google leads.`;
+    }
+  }
 }
 
 /* ── Form handling ─────────────────────────────────────────────────────── */
@@ -177,6 +190,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnTxt  = document.getElementById('rc-btn-txt');
   const spinner = document.getElementById('rc-spinner');
   const errBox  = document.getElementById('rc-error');
+
+  // GBP help toggle
+  const helpToggle = document.getElementById('gbp-help-toggle');
+  const helpBox    = document.getElementById('gbp-howto');
+  if (helpToggle && helpBox) {
+    helpToggle.addEventListener('click', () => {
+      const open = helpBox.style.display !== 'none';
+      helpBox.style.display = open ? 'none' : 'block';
+      helpToggle.textContent = open ? 'How do I find this?' : 'Hide instructions';
+    });
+  }
 
   function showError(msg) {
     errBox.textContent = msg;
@@ -195,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     hideError();
 
+    const gbpUrl       = document.getElementById('rc-gbp-url').value.trim();
     const businessName = document.getElementById('rc-biz').value.trim();
     const city         = document.getElementById('rc-city').value.trim();
     const category     = document.getElementById('rc-trade').value;
@@ -203,7 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const website      = document.getElementById('rc-website').value.trim();
     const email        = document.getElementById('rc-email').value.trim();
 
-    // Validation
+    // Validation — GBP URL first
+    if (!gbpUrl)       { showError('Please paste your Google Business Profile link.'); return; }
+    if (!gbpUrl.includes('google.com') && !gbpUrl.includes('g.page') && !gbpUrl.includes('goo.gl')) {
+      showError('That doesn\'t look like a Google Business Profile URL. Please paste a link from Google Maps.'); return;
+    }
     if (!businessName) { showError('Please enter your business name.'); return; }
     if (!city)         { showError('Please enter your city.'); return; }
     if (!category)     { showError('Please select your trade / category.'); return; }
@@ -215,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/optimize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ businessName, category, city, services, currentDescription, website, email }),
+        body: JSON.stringify({ businessName, category, city, services, currentDescription, website, email, gbpUrl }),
       });
 
       const data = await res.json();
@@ -232,6 +261,19 @@ document.addEventListener('DOMContentLoaded', () => {
       setBusy(false);
     }
   });
+
+  // Audit count live ticker
+  (function() {
+    const el = document.getElementById('rc-audits-count');
+    if (!el) return;
+    let n = 1247;
+    function tick() {
+      n += Math.random() > 0.65 ? 1 : 0;
+      el.textContent = n.toLocaleString();
+      setTimeout(tick, 4000 + Math.random() * 3000);
+    }
+    setTimeout(tick, 5000);
+  })();
 
   // Reset
   document.getElementById('rc-reset-btn').addEventListener('click', () => {

@@ -9,7 +9,7 @@ const db           = require('./db');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'reprocket-dev-secret-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'starpush-dev-secret-change-in-production';
 
 // ── Stripe setup ──────────────────────────────────────────────────────────────
 let stripe = null;
@@ -610,7 +610,7 @@ app.get('/api/customers/export', requireAuth, (req, res) => {
     escape(c.addedAt ? new Date(c.addedAt).toLocaleDateString() : ''),
   ].join(','));
   const csv = [headers.join(','), ...rows].join('\r\n');
-  const filename = `reprocket-customers-${new Date().toISOString().slice(0,10)}.csv`;
+  const filename = `starpush-customers-${new Date().toISOString().slice(0,10)}.csv`;
   res.setHeader('Content-Type', 'text/csv');
   res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
   res.send(csv);
@@ -912,7 +912,7 @@ app.get('/health',              (_req, res) => res.json({ status: 'ok', ts: new 
 
 // ── 404 catch-all ────────────────────────────────────────────────────────────
 app.use((_req, res) => {
-  res.status(404).send(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Page Not Found — RepRocket</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"/><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Inter',system-ui,sans-serif;background:#f3f4f6;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}.wrap{text-align:center;max-width:440px}.ico{font-size:64px;margin-bottom:16px}h1{font-size:28px;font-weight:800;color:#0f2340;margin-bottom:8px}p{font-size:15px;color:#6b7280;line-height:1.6;margin-bottom:24px}a{display:inline-block;padding:12px 28px;background:#0f2340;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;transition:background .15s}a:hover{background:#163352}</style></head><body><div class="wrap"><div class="ico">🚀</div><h1>Page not found</h1><p>The page you're looking for doesn't exist or has been moved. Let's get you back on track.</p><a href="/">← Back to RepRocket</a></div></body></html>`);
+  res.status(404).send(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Page Not Found — Starpush</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"/><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Inter',system-ui,sans-serif;background:#f3f4f6;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}.wrap{text-align:center;max-width:440px}.ico{font-size:64px;margin-bottom:16px}h1{font-size:28px;font-weight:800;color:#0f2340;margin-bottom:8px}p{font-size:15px;color:#6b7280;line-height:1.6;margin-bottom:24px}a{display:inline-block;padding:12px 28px;background:#0f2340;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;transition:background .15s}a:hover{background:#163352}</style></head><body><div class="wrap"><div class="ico">🚀</div><h1>Page not found</h1><p>The page you're looking for doesn't exist or has been moved. Let's get you back on track.</p><a href="/">← Back to Starpush</a></div></body></html>`);
 });
 
 // ── Automated follow-up scheduler ─────────────────────────────────────────────
@@ -939,7 +939,7 @@ setInterval(async () => {
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`\n  🚀 RepRocket running → http://localhost:${PORT}\n`);
+  console.log(`\n  🚀 Starpush running → http://localhost:${PORT}\n`);
   if (!process.env.TWILIO_ACCOUNT_SID) console.log('  ⚠  Twilio credentials not set — SMS will fail gracefully.');
   if (!process.env.ANTHROPIC_API_KEY)  console.log('  ⚠  Anthropic API key not set — AI features will fail gracefully.');
   if (!process.env.STRIPE_SECRET_KEY)  console.log('  ⚠  Stripe not configured — payments disabled (trial access only).');

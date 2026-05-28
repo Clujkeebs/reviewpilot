@@ -1,4 +1,4 @@
-# ReviewPilot Deployment Guide
+# Starpush Deployment Guide
 
 ## Quick Render Deploy (1 Click - RECOMMENDED)
 
@@ -6,7 +6,7 @@
 2. Click "New +" → "Web Service"
 3. Select "Build and deploy from a Git repository"
 4. Connect your GitHub account
-5. Create a new GitHub repo named `reviewpilot` and push this code
+5. Create a new GitHub repo named `starpush` and push this code
 6. Set these environment variables in Render:
    - `ANTHROPIC_API_KEY` = Your Anthropic API key (from https://console.anthropic.com)
    - `NODE_ENV` = production
@@ -29,11 +29,11 @@ Optional (for SMS):
 cd "/Users/skelemer/Desktop/Files/Projects & Code/b2b seo"
 
 # Create new GitHub repo at https://github.com/new
-# Name it: reviewpilot
+# Name it: starpush
 
-git remote set-url origin https://github.com/YOUR_USERNAME/reviewpilot.git
+git remote set-url origin https://github.com/YOUR_USERNAME/starpush.git
 git add .
-git commit -m "Initial ReviewPilot deployment"
+git commit -m "Initial Starpush deployment"
 git push -u origin main
 ```
 
